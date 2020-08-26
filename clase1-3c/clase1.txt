@@ -1,0 +1,33 @@
+PHP:
+Todo el codigo va entre <?php y ?>
+
+con "echo" se muestra el mensaje en el navegador
+
+comentarios con:
+// comentario con una linea
+# comentario con una linea
+/* comentario con mas de una linea */
+
+Variables:
+Cuatro tipo de escalares:
+boolean
+integer
+float
+string
+Compuestos:
+array
+object
+
+Deben comenzar con el signo $
+es case sensitive
+titpado dinamico, puede ir cambiando el tipo de variable
+la comilla doble detro del echo puede escribirse variable ej:
+echo "hola $nombre";
+Con comilla simple muestra todo como tipo string
+
+Existen funciones de cadenas:
+strtoupper($variable) -> lo que hace es transformar todo a mayuscula, las funciones no son case sensitive
+
+---------------------------------------------------------------------------------------------------------
+
+El nombe de las funciones no son case sensitive, se puede llamar con alguna letra mayuscula
