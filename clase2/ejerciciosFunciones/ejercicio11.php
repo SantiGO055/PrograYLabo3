@@ -10,8 +10,6 @@ function calcularPotencia(){
         echo "<br>";
         echo "$calculo";
     }
-    
-    
 }
 
 calcularPotencia();
