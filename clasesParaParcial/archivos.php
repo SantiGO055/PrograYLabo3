@@ -86,9 +86,92 @@ class Archivos{
         }
     }
 
+    /**Valido si la extension es imagen */
+    static function esImagen($extension){
+        $extensionesValidas = array(
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif' => 'image/tiff',
+            'svg' => 'image/svg+xml',
+            'svgz' => 'image/svg+xml'
+        );
+        $retorno = false;
+        
+        foreach ($extensionesValidas as $key => $value) {
+            if ($key == $extension) {
+                $retorno = true;
+                return $retorno;
+            }
+            else{
+                $retorno = false;
+            }
+        }
+        
+        return $retorno;
+
+
+    }
+    
+    //una es desde el name y otra es a traves de los mime
+    //con el explode por que separador el string convierta en array
+    //tambien controlar y limitar la cantidad de megas de un archivo
+
+    function guardarImagen($_files, $bytes,$path){
+        
+        //para evitar que se reemplace el archivo por uno que ya exista con el mismo nombre tengo que asignarle otro nombre
+        $aleatorio = rand(1000,100000);
+        
+        /**o tambien usar fecha para el nombre del archivo */
+        
+        //saber en que extension vino la imagen
+        //obtengo extension
+        $extensionExplode = explode('.',$_files['archivo']['name']);
+        $extension = $extensionExplode[1];
+
+        //$extension = ".png"; //hardcodeada pero realizar funcion para saber la extension que llega
+        
+        $origen = $_files['archivo']['tmp_name'];
+        $destino = $path . $aleatorio .'.' . $extension;
+       
+        
+        if(Archivos::esImagen($extension) && Archivos::validarBytesImagen($_files,$bytes)){
+            $subido = move_uploaded_file($origen,$destino);
+            if ($subido) {
+                return "Se guardo la imagen correctamente";
+            }
+            else{
+                return "No se pudo guardar la imagen";
+            }
+        }
+        else{
+            echo "El archivo no es una imagen o supera el tamaño de 3.5MB";
+        }
+        
+    }
+
+    static function validarBytesImagen($_files,$bytes){
+        
+        if ($_files['archivo']['size'] <= $bytes) {
+            echo "imagen menor a 3.5mb";
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+    }
+    static function eliminarImagen($origen,$destino){
+
+        rename($origen,$destino);
+    }
 
 }
-
 
 
 
