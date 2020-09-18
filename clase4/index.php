@@ -23,7 +23,7 @@ $miListaDeAutos = array();
  
 
 echo Archivos::guardarImagen($_FILES,3670016,'./img/');
-
+Token::manejarToken();
 
 //para eliminar voy a pasarle por el metodo get el nombre del archivo
 //Archivos::eliminarImagen('./img/7935.png','./backup/7935.png');
