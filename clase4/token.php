@@ -1,10 +1,11 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
+use \Firebase\JWT\JWT;
 /**clase creada para manejar el token de  libreria firebase*/
 class Token{
     
-    use \Firebase\JWT\JWT;
+    
 
     static function manejarToken(){
         $token = $_SERVER['HTTP_TOKEN'];
