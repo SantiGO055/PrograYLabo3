@@ -27,5 +27,8 @@ echo $vuelo1->MostrarVuelo();
 
 echo "<br>La suma de los vuelos es de: <br>";
 echo $vuelo1->Add($vuelo1,$vuelo2);
+Vuelo::Remove($pasajero3,$vuelo1);
+echo "<br><br><br><br><br><br><br><br><br>";
+echo $vuelo1->MostrarVuelo();
 
 ?>

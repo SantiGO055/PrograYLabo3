@@ -217,25 +217,15 @@ class Vuelo{
         } 
         
     }
-    public static function buscarPasajero($pasajero, $vuelo){
-        foreach ($vuelo->_listaDePasajeros as $value) {
-            if ($value == $pasajero) {
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-    }
     public static function Remove($pasajero,$vuelo){
         if ($pasajero instanceof Pasajero && $vuelo instanceof Vuelo) {
-            if (buscarPasajero($pasajero,$vuelo)) {
-
-                unset($pasajero);
-                return $vuelo;
-            }
-            else{
-                return " no se encontro el pasajero en el vuelo";
+            for ($i=0; $i < count($vuelo->_listaDePasajeros); $i++) { 
+                if ($vuelo->_listaDePasajeros[$i] === $pasajero) {
+                    echo "el pasajero esta en el vuelo";
+                    unset($vuelo->_listaDePasajeros[$i]);
+                    echo "pasajero eliminado con exito!";
+                    return $vuelo;
+                }
             }
         }
     }
