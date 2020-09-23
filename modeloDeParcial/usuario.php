@@ -19,12 +19,18 @@ class Usuario{
 
     public static function Login($email,$clave){
         $retorno = false;
-        $lista = Archivos::leerJson('users.json');
+        $lista = Archivos::leerJson('users.json',$listaUsuarios);
+
+        
         // var_dump($lista);
-        echo "<br>";
+        
         if(isset($lista)){
             foreach ($lista as $usuario) {
-                if ($usuario['email'] == $email && $usuario['clave'] == $clave) {
+                //$usuario['clave'] es la clave encriptada del json que levanto
+                if ($usuario['email'] == $email && Usuario::verificarContraseña($clave,$usuario['clave'])) {
+                    
+                    //Usuario::verificarContraseña($clave,$usuario['clave']);
+
                     $token = Token::crearToken($usuario);
                     
 
@@ -44,24 +50,21 @@ class Usuario{
         return password_verify($clave, $hash);
     }
 
-    public static function CrearUsuario($email,$clave){
+    
+
+    public static function CrearUsuario($email,$claveEncriptada){
         $retorno = false;
         if(!Usuario::buscarUsuario($email)){
 
             
             //TODO Al realizar el guardado de la clave hay que guardarla encriptada
-            $claveEncriptada = Usuario::encriptarContraseña($clave);
-            echo $clave . "<br>" . $claveEncriptada;
-            $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/imagen');
+            // $claveEncriptada = Usuario::encriptarContraseña($clave);
 
-            $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
-            if (Usuario::verificarContraseña($clave,$claveEncriptada) ) {
-                echo "la clave es correcta";
-            }
-            else{
-                echo "clave incorrecta";
-            }
+            $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/imagen');
             
+            $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
+            
+
             if(Archivos::guardarJson($usuario,'users.json')){
                 
                 $retorno = true;

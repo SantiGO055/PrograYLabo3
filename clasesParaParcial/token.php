@@ -27,11 +27,11 @@ class Token{
         
     }
     public static function VerificarToken($token){
+        $key = "pro3-parcial";
         $retorno = false;
         /**el try catch lo haremos cada vez que hay que autenticar una url */
         try {
-            // $token = $_SERVER['HTTP_TOKEN']; //token que obtengo de la cabecera
-            
+
             $retorno = JWT::decode($token, $key, array('HS256')); //decode para decodificarlo
             //print_r($retorno);
         

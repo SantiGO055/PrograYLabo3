@@ -72,45 +72,76 @@ class Archivos{
     }
 
     /**Guardar en JSON */
-
-    /**lo que guarda json es un string, no guarda objetos */
     public static function guardarJson($objeto,$ruta){
+        // $retorno = false;
+        // if(isset($lista)){
+        //     $ar = fopen("./".$ruta,"w");
+        //     array_push($array,$objeto);
+        //     fwrite($ar,json_encode($array));
+        //     fclose($ar);
+        //     $retorno = true;
+        // }
+        // else{
+        //     $array2 = array();
+        //     $ar = fopen("./".$ruta, "w");
+        //     array_push($array2,$objeto);
+        //     fwrite($ar,json_encode($array2));
+        //     fclose($ar);
+        //     $retorno = true;
+        // }
+        // return $retorno;
         $retorno = false;
-        if(isset($lista)){
-            $ar = fopen("./".$ruta,"w");
-            array_push($array,$objeto);
-            fwrite($ar,json_encode($array));
-            fclose($ar);
+        if(Archivos::leerJson($ruta, $array))
+        {
+            array_push($array, $objeto);
+            $aux = json_encode($array, true);
+        }
+        else
+        {
+            array_push($array, $objeto);
+            $aux = json_encode($array, true);
+        }
+        $archivo = fopen($ruta, 'w');
+        if(fwrite($archivo, $aux))
+        {
             $retorno = true;
         }
-        else{
-            $array2 = array();
-            $ar = fopen("./".$ruta, "w");
-            array_push($array2,$objeto);
-            fwrite($ar,json_encode($array2));
-            fclose($ar);
-            $retorno = true;
-        }
+        $cerrar = fclose($archivo);
+
         return $retorno;
 
     }
 
-    static function leerJson($ruta){
-        if (file_exists($ruta)){
-            $ar = fopen($ruta, "r");
+    static function leerJson($ruta,&$array){
+        // if (file_exists($ruta)){
+        //     $ar = fopen($ruta, "r");
 
-            $lista = json_decode(fgets($ar),true); //true para poder manejarlo como array asociativo
-            fclose($ar);
-            if(isset($lista)){
-                return $lista;
-            }
-            else{
-                return null;
-            }
+        //     $lista = json_decode(fgets($ar),true); //true para poder manejarlo como array asociativo
+        //     fclose($ar);
+        //     if(isset($lista)){
+        //         return $lista;
+        //     }
+        //     else{
+        //         return null;
+        //     }
+        // }
+        // else{
+        //     echo "El archivo no existe";
+        // }
+        $retorno = false;
+        if(file_exists($ruta) && filesize($ruta) > 0)
+        {
+            $archivo = fopen($ruta, 'r');
+            $array = fread($archivo, filesize($ruta));
+            fclose($archivo);
+            $array = json_decode($array, true);
+            $retorno = $array;
         }
-        else{
-            echo "El archivo no existe";
+        else
+        {
+            $array = array();
         }
+        return $retorno;
     }
 
     /**Valido si la extension es imagen */
