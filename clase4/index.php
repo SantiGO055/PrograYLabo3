@@ -4,9 +4,9 @@ include_once './auto.php';
 include_once '../clasesParaParcial/archivos.php';
 include_once './token.php';
 
-$miListaDeAutos = array();
+//$miListaDeAutos = array();
 
-
+    
 
 
 
@@ -22,8 +22,9 @@ $miListaDeAutos = array();
 
  
 
-echo Archivos::guardarImagen($_FILES,3670016,'./img/');
-Token::manejarToken();
+//echo Archivos::guardarImagen($_FILES,3670016,'./img/');
+
+//Token::manejarToken();
 
 //para eliminar voy a pasarle por el metodo get el nombre del archivo
 //Archivos::eliminarImagen('./img/7935.png','./backup/7935.png');
@@ -37,45 +38,7 @@ Token::manejarToken();
  * cualquier libreria se instala dentro de la carpeta vendor, incluimos un archivo definido en la documentacion de la libreria
  */
 
-#region esto lo pase a la clase archivos de la carpeta clasesParaParcial
-// $extensionExplode = explode('.',$_FILES['archivo']['name']);
-// $extension = $extensionExplode[1];
-// echo "<br>";
-// echo "<br>";
-// echo "<br>";
-// echo "<br>";
 
-
-// //$extension = ".png"; //hardcodeada pero realizar funcion para saber la extension que llega
-// $aleatorio = rand(1000,100000);
-// $origen = $_FILES['archivo']['tmp_name'];
-// $destino = "img/" . $aleatorio .'.' . $extension;// $_FILES['archivo']['name'];
-
-/**
- * array de imagenes images
-            
- */
-
-/**Al borrar la imagen lo que hacemos es moverla a una ubicacion llamada backup pero no del move_uploaded_file sino de otra manera
- * Tambien realizar marca de agua para pegarle una imagen a otra - php watermark image
- */
-
-// if(Archivos::esImagen($extension)){
-//     $subido = move_uploaded_file($origen,$destino);
-//     echo "paso";
-// }
-// else{
-//     echo " no paso";
-//     $subido = false;
-// }
-// echo "$origen <br> $destino";
-// if($subido){
-//     echo "Se movio";
-// }
-// else{
-//     echo "No se movio";
-// }
-#endregion
 
 #region MetodosPostYGet
 

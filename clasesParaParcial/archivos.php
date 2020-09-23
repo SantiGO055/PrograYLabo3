@@ -2,24 +2,49 @@
 
 class Archivos{
     
-    static function guardarTxt($ruta,$texto,$modo){
-        $size = filesize($ruta);
-        $archivo = fopen($ruta,$modo);
-
-        while(!feof($archivo)){
-            $linea = fgets($archivo,$size);
-            $datos = explode('*',$linea); //verifico los espacios de cada dato y los separo con *
-        
-            if(count($datos) == 4){
-                return $datos;
-                //instancio un nuevo objeto
-                //$nuevoAuto = new Auto($datos[0],$datos[1],$datos[2],$datos[3]);
-                /* *Lo agrego a una lista */
-                //array_push($listaDeAutos, $nuevoAuto);
-            }
+    public static function guardarTxt($texto,$ruta){
+        $retorno = false;
+        $array = array();
+        if(Archivos::leerTxt($ruta, $array))
+        {
+            array_push($array, $texto);
+            $aux = json_encode($array, true);
         }
+        else{
+            array_push($array, $texto);
+            $aux = json_encode($array, true);
+        }
+        $size = filesize($ruta);
+        $archivo = fopen($ruta,'w+');
+
+        if(fwrite($archivo, $aux))
+        {
+            $retorno = true;
+        }
+
         fclose($archivo);
 
+        return $retorno;
+
+    }
+    public static function leerTxt($ruta, $array)
+    {
+        $size = filesize($ruta);
+        $retorno = false;
+        if(file_exists($ruta) && $size > 0)
+        {
+            $archivo = fopen($ruta, 'r');
+            $array = fread($archivo, filesize($ruta));
+
+            fclose($archivo);
+            $array = json_decode($array, true);
+            $retorno = true;
+        }
+        else
+        {
+            $array = array();
+        }
+        return $retorno;
     }
 
     static function serializar($ruta, $objeto){
@@ -49,13 +74,14 @@ class Archivos{
     /**Guardar en JSON */
 
     /**lo que guarda json es un string, no guarda objetos */
-    public static function guardarJson($ruta, $objeto){
-
+    public static function guardarJson($objeto,$ruta){
+        $retorno = false;
         if(isset($lista)){
             $ar = fopen("./".$ruta,"w");
             array_push($array,$objeto);
             fwrite($ar,json_encode($array));
             fclose($ar);
+            $retorno = true;
         }
         else{
             $array2 = array();
@@ -63,8 +89,9 @@ class Archivos{
             array_push($array2,$objeto);
             fwrite($ar,json_encode($array2));
             fclose($ar);
+            $retorno = true;
         }
-
+        return $retorno;
 
     }
 
@@ -72,7 +99,7 @@ class Archivos{
         if (file_exists($ruta)){
             $ar = fopen($ruta, "r");
 
-            $lista = json_decode(fgets($ar));
+            $lista = json_decode(fgets($ar),true); //true para poder manejarlo como array asociativo
             fclose($ar);
             if(isset($lista)){
                 return $lista;
@@ -104,7 +131,7 @@ class Archivos{
         $retorno = false;
         
         foreach ($extensionesValidas as $key => $value) {
-            if ($key == $extension) {
+            if ($value == $extension) {
                 $retorno = true;
                 return $retorno;
             }
@@ -122,25 +149,43 @@ class Archivos{
     //con el explode por que separador el string convierta en array
     //tambien controlar y limitar la cantidad de megas de un archivo
 
-    function guardarImagen($_files, $bytes,$path){
+    public static function guardarImagen($_files, $bytes,$path){
         
-        //para evitar que se reemplace el archivo por uno que ya exista con el mismo nombre tengo que asignarle otro nombre
+        //para evitar que se reemplace el archivo por uno que ya exista con el mismo nombre asigno uno aleatorio
         $aleatorio = rand(1000,100000);
         
-        /**o tambien usar fecha para el nombre del archivo */
-        
-        //saber en que extension vino la imagen
         //obtengo extension
-        $extensionExplode = explode('.',$_files['archivo']['name']);
+        $extensionExplode = explode('.',$_files['foto']['name']);
         $extension = $extensionExplode[1];
 
-        //$extension = ".png"; //hardcodeada pero realizar funcion para saber la extension que llega
-        
-        $origen = $_files['archivo']['tmp_name'];
+        $origen = $_files['foto']['tmp_name'];
+        $nombreArchivo = $aleatorio .'.' . $extension;
         $destino = $path . $aleatorio .'.' . $extension;
        
         
-        if(Archivos::esImagen($extension) && Archivos::validarBytesImagen($_files,$bytes)){
+        if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
+            $subido = move_uploaded_file($origen,$destino);
+            if ($subido) {
+                return $nombreArchivo;
+            }
+            else{
+                return "No se pudo guardar la imagen";
+            }
+        }
+        else{
+            return "El archivo no es una imagen o supera el tamaño de 3.5MB";
+        }
+        
+    }
+    public static function guardarImagenSinAleatorio($_files, $bytes,$path){
+        $extensionExplode = explode('.',$_files['foto']['name']);
+        $extension = $extensionExplode[1];
+
+        $origen = $_files['foto']['tmp_name'];
+        $destino = $path . '.' . $extension;
+       
+        
+        if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
             $subido = move_uploaded_file($origen,$destino);
             if ($subido) {
                 return "Se guardo la imagen correctamente";
@@ -152,13 +197,12 @@ class Archivos{
         else{
             echo "El archivo no es una imagen o supera el tamaño de 3.5MB";
         }
-        
     }
 
     static function validarBytesImagen($_files,$bytes){
         
-        if ($_files['archivo']['size'] <= $bytes) {
-            echo "imagen menor a 3.5mb";
+        if ($_files['foto']['size'] <= $bytes) {
+            
             return true;
         }
         else{
