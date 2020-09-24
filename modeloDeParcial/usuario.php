@@ -11,11 +11,21 @@ class Usuario{
 
     public function __construct($email, $clave, $imagenNombre)
     {
-        $this->email = $email;
+        $this->setEmail($email);
         $this->clave = $clave;
         $this->imagenNombre = $imagenNombre;
     }
     
+    public function setEmail($email){
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $this->email = "emailNoValido";
+        }
+        else{
+            $this->email = $email;
+            
+        }
+    }
 
     public static function Login($email,$clave){
         $retorno = false;
@@ -57,26 +67,30 @@ class Usuario{
         if(!Usuario::buscarUsuario($email)){
 
             
-            //TODO Al realizar el guardado de la clave hay que guardarla encriptada
+            
             // $claveEncriptada = Usuario::encriptarContraseña($clave);
 
             $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/imagen');
             
             $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
-            
-
-            if(Archivos::guardarJson($usuario,'users.json')){
-                
-                $retorno = true;
-            }
-            if (isset($listaUsuarios)) {
-                
-                array_push($listaUsuarios);
+            if ($usuario->email != "emailNoValido") {
+                if(Archivos::guardarJson($usuario,'users.json')){
+                    $retorno = true;
+                }
+                if (isset($listaUsuarios)) {
+                    
+                    array_push($listaUsuarios);
+                }
+                else{
+                    
+                    $listaUsuarios = $usuario;
+                }
             }
             else{
-                
-                $listaUsuarios = $usuario;
+                $retorno = false;
             }
+
+            
         }
         else
         {

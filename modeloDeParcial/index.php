@@ -11,9 +11,10 @@ $request_method = $_SERVER['REQUEST_METHOD'];
 $path_info = $_SERVER['PATH_INFO'];
 
 $listaDeMaterias = array();
+$listaDeMateriasProfe = array();
 
 $header = getallheaders();
-
+$listaProfes = [];
 $pathImg = '/imagenes';
 $id= mt_rand();
 
@@ -33,7 +34,7 @@ switch($request_method)
                 }
                 else
                 {
-                    $datos = 'Error al crear usuario.';
+                    $datos = 'Error al crear usuario. Email no valido';
                 }
                 break;
             case '/login'://PUNTO 2
@@ -84,91 +85,101 @@ switch($request_method)
                 $token = $header['token'];
                 $nombre = $_POST['nombre'] ?? "";
                 $legajo = $_POST['legajo'] ?? 0;
-                $listaProfes = [];
-                //TODO terminar de hacer el alta del profesor si existe o no el legajo
-                /**Si ya hay un archivo de profesores reviso si el legajo ya existe */
-                $listaProfes = Archivos::leerJson('profesores.json',$listaProfesores);
-                if(is_array($listaProfes)){
-                    foreach ($listaProfes as $key => $value) {
-                        if ($legajo == $value['legajo']) {
-                            $datos = "Legajo existente";
-                            $retorno = true;
-                        }
-                        else{
-                            $retorno = false;
-                        }
-                    }
-                }
-                else{
-                    $profesor = new Profesor($nombre,$legajo);
-                    $listaProfes = $profesor;
-                    if(Archivos::guardarJson($profesor,'profesores.json')){
-                        $datos = "Profesor dado de alta";
-                    }
-                }
+
+                $usuarioLogueado = Token::VerificarToken($token);
+
+                $profesor = new Profesor($nombre,$legajo);
+
                 if(Archivos::guardarJson($profesor,'profesores.json')){
                     $datos = "Profesor dado de alta";
                 }
+                else{
+                    $datos = "Profesor no dado de alta";
+                }
 
-                
-                //TODO leer json para ver si el legajo ya existe
-                
-                //$venta = new Venta($_POST['id_producto'], $_POST['cantidad'], $_POST['usuario']);
-                //guardo venta seralizada
-                // GuardarSerializado($venta, 'ventas.txt');
-                // //modifico stock
-                // if(Producto::ModificarStock($_POST['id_producto'], $_POST['cantidad']))
-                // {
-                //     $datos = 'Monto Venta: '. $datos;
-
-                // }
-            
-            
-            
                 break;
             default:
             $datos = 'faltan datos';
             break;
+
+            case '/asignacion': //PUNTO 5
+                $header = getallheaders();
+                $token = $header['token'];
+                $legajo = $_POST['legajo'] ?? "";
+                $idMateria = $_POST['idMateria'] ?? 0;
+                $turno = $_POST['turno'] ?? "";
+                $usuarioLogueado = Token::VerificarToken($token);
+
+                if (!$usuarioLogueado) {
+                    echo "token incorrecto";
+                }
+                else{
+                    //Leo json de materias
+                    $listaDeMaterias = Archivos::leerJson('materias.json', $listaDeMaterias);
+
+                    //Leo json de profesores
+                    $listaProfes = Archivos::leerJson('profesores.json', $listaProfes);
+                    
+                    //leo json de materias-profesores
+                    $listaDeMateriasProfe = Archivos::leerJson('materias-profesores.json', $listaDeMateriasProfe);
+                    $profesorMateria = Profesor::asignarMateria($listaDeMaterias,$listaProfes,$listaDeMateriasProfe, $legajo,$idMateria,$turno);
+                    //var_dump($listaDeMateriasProfe);
+                    if($profesorMateria instanceof Profesor && $profesorMateria != null){
+                        Archivos::guardarJson($profesorMateria,'materias-profesores.json');
+                        $datos = "Se agrego el presor a la materia}";
+                    }
+                    else{
+                        $datos = $profesorMateria;
+                    }
+                }
+            break;
+            
         }
     break;
     
     case 'GET':
         //$datos = Usuario::Mostrar($token);
         $token = $header['token'];
-        $auxUsu = ValidadorJWT::VerificarToken($token);
-        $tipoUsuario = Usuario::EsAdmin($auxUsu);
+        $usuarioLogueado = Token::VerificarToken($token);
+
+        if (!$usuarioLogueado) {
+            $datos = "token incorrecto";
+        }
+        else{
+            
+                switch ($path_info){
+                case '/materias':
+                    $datos = Materias::mostrarMaterias();
+                    if ($datos === "") {
+                        $datos = 'Faltan datos';
+                    }
+                    
+                    break;
+                case '/profesor'://PUNTO 6
+                    $datos = Profesor::mostrarProfesores();
+                    if($datos === "")
+                    {
+                        $datos = 'Faltan datos';
+                    }
+                    //echo json_encode($respuesta);
+                    break;
+                default:
+                    $datos = 'faltan datos';
+                    break;
+
+                case '/asignacion':
+                    $datos = Profesor::mostrarMateriasAsignadas();
+                    if($datos === "")
+                    {
+                        $datos = 'Faltan datos';
+                    }
+                    //echo json_encode($respuesta);
+                    break;
+                break;
+                }
+        }
         
-        switch ($path_info) 
-        {
-            case '/stock':
-                $datos = Producto::MostrarProductos();
-                $datos != '' ??  $datos = 'Faltan datos';
-                //echo json_encode($respuesta);
-                break;
-            case '/ventas'://PUNTO 6
-                if(isset($token))
-                {
-                    if($tipoUsuario)//admin
-                    {
-                        //mostrar todas las ventas
-                        $datos = Venta::MostrarVentas();
-                    }
-                    else//user
-                    {
-                        //mostrar ventas del usuario
-                        $datos = Venta::MostrarVenta($auxUsu);
-                    }
-                }
-                else
-                {
-                    $datos = 'Faltan datos';    
-                }
-                //echo json_encode($respuesta);
-                break;
-            default:
-                $datos = 'faltan datos';
-                break;
-    }
+        
     break;  
     default:
     break;
