@@ -15,48 +15,66 @@ $listaDeMateriasProfe = array();
 
 $header = getallheaders();
 $listaProfes = [];
-$pathImg = '/imagenes';
-$id= mt_rand();
 
+
+$pathAux = explode('/', getenv('REQUEST_URI'));
+
+// var_dump($_SERVER);
+// echo "<br>";
+// var_dump($pathAux);
+// echo "<br>";
+
+echo "<br>";
 switch($request_method)
 {
     case 'POST':
-        switch ($path_info) 
+        switch ($pathAux[3]) 
         {
-            case '/usuario'://PUNTO 1
-                $email =$_POST['email'] ?? "";
-                $clave =$_POST['clave'] ?? "";
-                // $foto = $_POST['foto'] ?? "";
-                $claveEncriptada = Usuario::encriptarContraseña($clave);
-                if(Usuario::CrearUsuario($email,$claveEncriptada))
-                {
-                    $datos = 'Se creo el usuario correctamente!';
+            
+            case 'usuario'://PUNTO 1
+                if (isset($pathAux[4])) {
+                    // echo $pathAux[4];
+                    $foto = $_POST['foto'] ?? "";
+
+                    if(Usuario::asignarFotoNueva($pathAux[4],$foto)){
+                        
+                        $datos = "Se asigno la foto al usuario correctamente";
+                    }
+                    else{
+                        $datos = "Error al asignar la foto";
+                    }
+
                 }
-                else
-                {
-                    $datos = 'Error al crear usuario. Email no valido';
+                else{
+                
+                    $email =$_POST['email'] ?? "";
+                    $clave =$_POST['clave'] ?? "";
+                    // $foto = $_POST['foto'] ?? "";
+                    $claveEncriptada = Usuario::encriptarContraseña($clave);
+                    if(Usuario::CrearUsuario($email,$claveEncriptada))
+                    {
+                        $datos = 'Se creo el usuario correctamente!';
+                    }
+                    else
+                    {
+                        $datos = 'Error al crear usuario. Email no valido';
+                    }
                 }
                 break;
-            case '/login'://PUNTO 2
+            case 'login'://PUNTO 2
                 $email = $_POST['email'] ?? "";
                 $clave = $_POST['clave'] ?? "";
-                // if (Usuario::verificarContraseña($clave,$claveEncriptada)) {
-                //     echo "contraseña correcta";
-                // }
-                // else{
-                //     echo "contraseña incorrecta";
-                // }
-
+                $token = Usuario::Login($email, $clave);
                 if(Usuario::Login($email, $clave))
                 {
-                    $datos = 'Login Exitoso';
+                    $datos = 'Login Exitoso. TOKEN: ' . $token;
                 }
                 else
                 {
                     $datos = 'Nombre o Clave Incorrectas';                       
                 }
                 break;
-            case '/materia'://PUNTO 3
+            case 'materia'://PUNTO 3
                 $header = getallheaders();
                 $token = $header['token'];
                 $nombre = $_POST['nombre'] ?? "";
@@ -72,15 +90,15 @@ switch($request_method)
                     
     
                     if(Archivos::guardarJson($materia,'materias.json')){
-                        $datos = "Archivo guardado correctamente";
+                        $datos = "Materia guardada correctamente";
                     }
                     else{
-                        $datos = "Ocurrio un error al guardar el archivo";
+                        $datos = "Ocurrio un error al guardar la materia";
                     }
                 }
 
                 break;
-            case '/profesor'://PUNTO 4
+            case 'profesor'://PUNTO 4
                 $header = getallheaders();
                 $token = $header['token'];
                 $nombre = $_POST['nombre'] ?? "";
@@ -102,7 +120,7 @@ switch($request_method)
             $datos = 'faltan datos';
             break;
 
-            case '/asignacion': //PUNTO 5
+            case 'asignacion': //PUNTO 5
                 $header = getallheaders();
                 $token = $header['token'];
                 $legajo = $_POST['legajo'] ?? "";
@@ -111,7 +129,7 @@ switch($request_method)
                 $usuarioLogueado = Token::VerificarToken($token);
 
                 if (!$usuarioLogueado) {
-                    echo "token incorrecto";
+                    $datos = "token incorrecto";
                 }
                 else{
                     //Leo json de materias
@@ -123,10 +141,10 @@ switch($request_method)
                     //leo json de materias-profesores
                     $listaDeMateriasProfe = Archivos::leerJson('materias-profesores.json', $listaDeMateriasProfe);
                     $profesorMateria = Profesor::asignarMateria($listaDeMaterias,$listaProfes,$listaDeMateriasProfe, $legajo,$idMateria,$turno);
-                    //var_dump($listaDeMateriasProfe);
+                    
                     if($profesorMateria instanceof Profesor && $profesorMateria != null){
                         Archivos::guardarJson($profesorMateria,'materias-profesores.json');
-                        $datos = "Se agrego el presor a la materia}";
+                        $datos = "Se agrego el profesor a la materia}";
                     }
                     else{
                         $datos = $profesorMateria;
@@ -147,36 +165,35 @@ switch($request_method)
         }
         else{
             
-                switch ($path_info){
-                case '/materias':
-                    $datos = Materias::mostrarMaterias();
-                    if ($datos === "") {
-                        $datos = 'Faltan datos';
-                    }
-                    
-                    break;
-                case '/profesor'://PUNTO 6
-                    $datos = Profesor::mostrarProfesores();
-                    if($datos === "")
-                    {
-                        $datos = 'Faltan datos';
-                    }
-                    //echo json_encode($respuesta);
-                    break;
-                default:
-                    $datos = 'faltan datos';
-                    break;
-
-                case '/asignacion':
-                    $datos = Profesor::mostrarMateriasAsignadas();
-                    if($datos === "")
-                    {
-                        $datos = 'Faltan datos';
-                    }
-                    //echo json_encode($respuesta);
-                    break;
-                break;
+            switch ($path_info){
+            case '/materias':
+                $datos = Materias::mostrarMaterias();
+                if ($datos === "") {
+                    $datos = 'Faltan datos';
                 }
+                
+                break;
+            case '/profesor'://PUNTO 6
+                $datos = Profesor::mostrarProfesores();
+                if($datos === "")
+                {
+                    $datos = 'Faltan datos';
+                }
+                //echo json_encode($respuesta);
+                break;
+            case '/asignacion':
+                $datos = Profesor::mostrarMateriasAsignadas();
+                if($datos === "")
+                {
+                    $datos = 'Faltan datos';
+                }
+                //echo json_encode($respuesta);
+                break;
+            
+            default:
+            $datos = 'faltan datos';
+            break;
+            }
         }
         
         

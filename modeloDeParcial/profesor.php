@@ -24,7 +24,6 @@ class Profesor{
                 
                     foreach ($listaProfes as $profesor) {
                         if($profesor['legajo'] == $legajo){
-                            echo $profesor['legajo'];
                             foreach ($listaDeMateriasProfe as $materiasProfesores) {
                                 if ($materiasProfesores['legajo'] != $legajo) {
                                     
@@ -42,7 +41,6 @@ class Profesor{
                                 }
                                 else{
                                     $datos = "El profesor ya posee la materia asignada";
-                                    //return $datos;
                                 }
                             }
                         }
@@ -78,11 +76,6 @@ class Profesor{
                     $datos = "idMateria no encontrado";
                 }
             }
-            
-            //var_dump($profeMateria);
-            
-            
-            
         }
         return $datos;
     }

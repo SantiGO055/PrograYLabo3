@@ -23,7 +23,6 @@ class Token{
         $retorno = JWT::encode($payload, $key); //encode sirve para codificar un objeto, le paso el array con los datos y la key
         return $retorno;
         
-        var_dump($jwt);
         
     }
     public static function VerificarToken($token){

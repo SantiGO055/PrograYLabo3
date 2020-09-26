@@ -73,6 +73,7 @@ class Archivos{
 
     /**Guardar en JSON */
     public static function guardarJson($objeto,$ruta){
+        #region codigoAnterior
         // $retorno = false;
         // if(isset($lista)){
         //     $ar = fopen("./".$ruta,"w");
@@ -90,6 +91,8 @@ class Archivos{
         //     $retorno = true;
         // }
         // return $retorno;
+        #endregion
+
         $retorno = false;
         if(Archivos::leerJson($ruta, $array))
         {
@@ -113,6 +116,7 @@ class Archivos{
     }
 
     static function leerJson($ruta,&$array){
+        #region codigoAnterior
         // if (file_exists($ruta)){
         //     $ar = fopen($ruta, "r");
 
@@ -128,6 +132,8 @@ class Archivos{
         // else{
         //     echo "El archivo no existe";
         // }
+        #endregion
+
         $retorno = false;
         if(file_exists($ruta) && filesize($ruta) > 0)
         {
@@ -140,10 +146,25 @@ class Archivos{
         else
         {
             $array = array();
+            $retorno = $array;
         }
         return $retorno;
     }
 
+    public static function modificarJson($path,$index,$key,$value){
+        
+        //Load the file
+        $data = file_get_contents($path);
+        //var_dump($data);
+
+        $json_arr = json_decode($data, true);
+
+        var_dump($json_arr[$index][$key]);
+        $json_arr[$index][$key] = $value;
+
+        file_put_contents('./users.json', json_encode($json_arr));
+        
+    }
     /**Valido si la extension es imagen */
     static function esImagen($extension){
         $extensionesValidas = array(
@@ -179,55 +200,75 @@ class Archivos{
     //una es desde el name y otra es a traves de los mime
     //con el explode por que separador el string convierta en array
     //tambien controlar y limitar la cantidad de megas de un archivo
+    // public static function modificarJson($path,$key,$valor){
 
-    public static function guardarImagen($_files, $bytes,$path){
+    //     $json_object = file_get_contents($path);
+    //     $data = json_decode($json_object, true);
+    //     //Then edit what you want such as:
+    //     // var_dump($data);
+    //     echo $key;
+    //     // echo "<br>";
+    //     // echo $valor;
+    //     // echo "<br>";
+    //     $data[$key] = $valor;
+    //     //Finally rewrite it back on the file (or a newer one):
+
+    //     $json_object = json_encode($data);
+    //     file_put_contents($path, $json_object);
+
+    // }
+
+    public static function guardarImagen($_files, $bytes,$path,$aleat = false){
+        $extensionExplode = explode('.',$_files['foto']['name']);
+        $extension = $extensionExplode[1];
+        $origen = $_files['foto']['tmp_name'];
+
+        if($aleat){
+            $aleatorio = rand(1000,100000);
+            
+
+            
+            $nombreArchivo = $aleatorio .'.' . $extension;
+            $destino = $path . $aleatorio .'.' . $extension;
         
+            
+            if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
+                $subido = move_uploaded_file($origen,$destino);
+                if ($subido) {
+                    return $nombreArchivo;
+                }
+                else{
+                    return "No se pudo guardar la imagen";
+                }
+            }
+            else{
+                return "El archivo no es una imagen o supera el tamaño de 3.5MB";
+            }
+
+        }
+        else{
+            $destino = $path . '.' . $extension;
+       
+            if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
+                $subido = move_uploaded_file($origen,$destino);
+                if ($subido) {
+                    return "Se guardo la imagen correctamente";
+                }
+                else{
+                    return "No se pudo guardar la imagen";
+                }
+            }
+            else{
+                return "El archivo no es una imagen o supera el tamaño de 3.5MB";
+            }
+
+        }
         //para evitar que se reemplace el archivo por uno que ya exista con el mismo nombre asigno uno aleatorio
-        $aleatorio = rand(1000,100000);
+        
         
         //obtengo extension
-        $extensionExplode = explode('.',$_files['foto']['name']);
-        $extension = $extensionExplode[1];
-
-        $origen = $_files['foto']['tmp_name'];
-        $nombreArchivo = $aleatorio .'.' . $extension;
-        $destino = $path . $aleatorio .'.' . $extension;
-       
         
-        if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
-            $subido = move_uploaded_file($origen,$destino);
-            if ($subido) {
-                return $nombreArchivo;
-            }
-            else{
-                return "No se pudo guardar la imagen";
-            }
-        }
-        else{
-            return "El archivo no es una imagen o supera el tamaño de 3.5MB";
-        }
         
-    }
-    public static function guardarImagenSinAleatorio($_files, $bytes,$path){
-        $extensionExplode = explode('.',$_files['foto']['name']);
-        $extension = $extensionExplode[1];
-
-        $origen = $_files['foto']['tmp_name'];
-        $destino = $path . '.' . $extension;
-       
-        
-        if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
-            $subido = move_uploaded_file($origen,$destino);
-            if ($subido) {
-                return "Se guardo la imagen correctamente";
-            }
-            else{
-                return "No se pudo guardar la imagen";
-            }
-        }
-        else{
-            echo "El archivo no es una imagen o supera el tamaño de 3.5MB";
-        }
     }
 
     static function validarBytesImagen($_files,$bytes){
@@ -241,38 +282,21 @@ class Archivos{
         }
         
     }
-    static function eliminarImagen($origen,$destino){
+    static function moverImagen($origen,$destino){
 
-        rename($origen,$destino);
+        if(file_exists($origen) && file_exists($destino)){
+            if(rename($origen,$destino))
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+        
     }
+    
 
 }
-
-
-
-// $fread = fread($archivo,100); //Lee todo el archivo
-
-
-// $fwrite = fwrite($archivo, $auto . PHP_EOL);
-
-// con a+ deja el cursor al final, por eso no lo lee
-//lo imprimo con
-// echo "fwrite $fwrite <br>";
-
-
-/**Recorro la lista */
-// foreach ($listaDeAutos as $value) {
-//     echo $value->_patente;
-// }
-//var_dump($listaDeAutos);
-
-// /**Creo una copia del archivo */
-// copy($file,'nuevo_archivo.txt');
-// /**Elimino el archivo que cree nuevo */
-// unlink('nuevo_archivo.txt');
-
-
-/**cierro el archivo */
 
 
 

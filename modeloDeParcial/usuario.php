@@ -43,8 +43,6 @@ class Usuario{
 
                     $token = Token::crearToken($usuario);
                     
-
-                    var_dump($token);
                     return $token;
                 break;
                 }
@@ -65,12 +63,9 @@ class Usuario{
     public static function CrearUsuario($email,$claveEncriptada){
         $retorno = false;
         if(!Usuario::buscarUsuario($email)){
-
             
-            
-            // $claveEncriptada = Usuario::encriptarContraseña($clave);
 
-            $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/imagen');
+            $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/imagen',true);
             
             $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
             if ($usuario->email != "emailNoValido") {
@@ -100,23 +95,61 @@ class Usuario{
     }
 
 
-    public function buscarUsuario($email)
+    public static function buscarUsuario($email)
     {   
         $retorno = false;
-        if(isset( $listaUsuarios)){
-            if(Archivos::leerTxt('usuario.txt', $listaUsuarios))
-            {
-                foreach ($listaUsuarios as $auxUr)
-                {
-                    if($email == $auxUr['email'])
-                    {
-                        $retorno = true;
-                        break;
-                    }
-                }
+        Archivos::leerJson('./users.json',$listaUsuarios);
+        //var_dump($listaUsuarios);
+
+        foreach ($listaUsuarios as $usuario) {
+            if ($usuario['email'] === $email) {
+                $retorno = true;
             }
-        return $retorno;
+            else{
+                $retorno = false;
+            }
         }
+        return $retorno;
+        // if(isset( $listaUsuarios)){
+        //     if(Archivos::leerTxt('usuario.txt', $listaUsuarios))
+        //     {
+        //         foreach ($listaUsuarios as $auxUr)
+        //         {
+        //             if($email == $auxUr['email'])
+        //             {
+        //                 $retorno = true;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // return $retorno;
+        // }
+        
+    }
+    public static function asignarFotoNueva($email,$foto){
+        Archivos::leerJson('./users.json',$listaUsuarios);
+        //var_dump($listaUsuarios);
+        $nombreFoto = $_FILES["foto"]["name"];
+        for ($i=0; $i < count($listaUsuarios); $i++) { 
+            if ($listaUsuarios[$i]['email'] === $email) {
+                //var_dump($nombreFoto);
+                //$pathMover = "./imagenes/" . $listaUsuarios[$i]['imagenNombre'];
+
+                Archivos::moverImagen("./imagenes/imagen" . $listaUsuarios[$i]['imagenNombre'] , "./backup/".$listaUsuarios[$i]['imagenNombre']);
+                $usuarioAux = new Usuario($email,$listaUsuarios[$i]['clave'],$nombreFoto);
+                
+                Archivos::modificarJson("./users.json",$i,"imagenNombre",$nombreFoto);
+                $retorno = true;
+                return $retorno;
+            }
+            else{
+                $retorno = false;
+            }
+        }
+        // foreach ($listaUsuarios as $usuario) {
+            
+        // }
+
         
     }
 
