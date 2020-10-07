@@ -9,7 +9,7 @@ class Token{
 
     public static function crearToken($dato){
         $retorno = false;
-        $key = "pro3-parcial";
+        $key = "primerparcial";
 
         $payload = array(
             "email" => $dato['email'],
@@ -24,7 +24,7 @@ class Token{
         
     }
     public static function VerificarToken($token){
-        $key = "pro3-parcial";
+        $key = "primerparcial";
         $retorno = false;
         try {
             $retorno = JWT::decode($token, $key, array('HS256'));
