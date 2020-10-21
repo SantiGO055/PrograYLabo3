@@ -31,7 +31,7 @@ switch($request_method)
         switch ($pathAux[3]) 
         {
             
-            case 'registro'://PUNTO 1 y 9
+            case 'registro'://PUNTO 1
                 // if (isset($pathAux[3])) {
                 //     // echo $pathAux[4];
                 //     $foto = $_POST['foto'] ?? "";
@@ -84,7 +84,7 @@ switch($request_method)
                 $usuarioLogueado = Token::VerificarToken($token);
                 
                 $fecha = date('d-h');
-                echo $fecha;
+                
                 $usuarioLogueadoArray = (array) $usuarioLogueado;
                 
                 
@@ -104,6 +104,27 @@ switch($request_method)
                 }
 
                 break;
+            case 'users':
+                $foto = $_POST['foto'] ?? "";
+                $token = $header['token'];
+                $usuarioLogueado = Token::VerificarToken($token);
+                
+                $usuarioLogueadoArray = (array) $usuarioLogueado;
+
+                if (!$usuarioLogueado) {
+                    $datos = "Usuario no logueado, token incorrecto!";
+                }
+                else{
+                    if(Usuario::asignarFotoNueva($usuarioLogueadoArray['email'],$foto)){
+                        $datos = "Imagen modificada correctamente";
+                    }
+                    else{
+                        $datos = "Ocurrio un error al guardar la imagen";
+                    }
+                    
+                }
+            break;
+            
             // case 'profesor'://PUNTO 4
             //     $header = getallheaders();
             //     $token = $header['token'];
@@ -122,26 +143,10 @@ switch($request_method)
             //     }
 
             //     break;
-            // default:
-            $datos = 'faltan datos';
-            break;
+            default:
+                $datos = 'faltan datos';
+                break;
 
-            case 'users': 
-                $header = getallheaders();
-                $token = $header['token'];
-                $turno = $_POST['turno'] ?? "";
-
-                $usuarioLogueado = Token::VerificarToken($token);
-                $usuarioLogueadoArray = (array) $usuarioLogueado;
-
-                if (!$usuarioLogueado) {
-                    $datos = "token incorrecto";
-                }
-                else{
-                    $datos = "";
-                    
-                }
-            break;
             
         }
     break;
@@ -152,16 +157,15 @@ switch($request_method)
         $usuarioLogueado = Token::VerificarToken($token);
         $patenteGet =$_GET['patente'] ?? "";
         $path_info = explode("/",$path_info);
-        echo $path_info[1];
-
+        
         if (!$usuarioLogueado) {
             $datos = "token incorrecto";
         }
         else{
             switch ($path_info[1]){
+                
             case 'retiro': //punto 4
                 $fechaEgreso = date('h');
-
                 
                 $listaAutos = Archivos::leerJson('./autos.json',$listaAutos);
                 $patente = $pathAux[4];
@@ -171,7 +175,11 @@ switch($request_method)
                         //var_dump($auto);
                         $importe = Auto::obtenerImporte($auto,$fechaEgreso);
                         
-                        $datos = "importe: {$importe} , patente: {$patente} , ingreso: {$auto['_horaIngreso']} , egreso: {$fechaEgreso}";
+                        $datos = "importe: {$importe} , patente: {$patente} , ingreso: {$auto['_horaIngreso']} , egreso: {$fechaEgreso} hs";
+                    break;
+                    }
+                    else{
+                        $datos = "patente no encontrada";
                     }
                 }
 
@@ -184,13 +192,17 @@ switch($request_method)
                 
                 break;
             case 'ingreso'://PUNTO 5
-                
+                $datos = " ";
                 if ($patenteGet == null) {
                     $listaAutos = Archivos::leerJson('./autos.json',$listaAutos);
-                    foreach ($listaAutos as $auto) {
+                    // $listaAutosAux = (object) $listaAutos;
+                    $listaAutosOrdenados = Auto::ordenarAutoAscendente($listaAutos);
+                    
+                    foreach ($listaAutosOrdenados as $auto) {
                         $autoAux = (object) $auto;
                         $mostrarAux = Auto::mostrarAuto($autoAux);
-                        $datos = " ". $mostrarAux;
+                        
+                        $datos .= "<br>". $mostrarAux;
                     }
                 }
                 else{

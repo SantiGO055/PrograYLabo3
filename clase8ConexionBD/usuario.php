@@ -1,22 +1,20 @@
 <?php
 
-include_once './clasesParaParcial/token.php';
-include_once './clasesParaParcial/archivos.php';
+include_once '../clasesParaParcial/token.php';
+include_once '../clasesParaParcial/archivos.php';
+include_once './AccesoDatos.php';
 
 
 class Usuario{
     public $email;
     public $clave;
     public $imagenNombre;
-    public $tipo;
 
-    public function __construct($email, $clave, $imagenNombre,$tipo)
+    public function __construct($email, $clave, $imagenNombre)
     {
         $this->setEmail($email);
         $this->clave = $clave;
         $this->imagenNombre = $imagenNombre;
-        $this->tipo = $tipo;
-        
     }
     
     public function setEmail($email){
@@ -26,6 +24,7 @@ class Usuario{
         }
         else{
             $this->email = $email;
+            
         }
     }
 
@@ -33,6 +32,8 @@ class Usuario{
         $retorno = false;
         $lista = Archivos::leerJson('users.json',$listaUsuarios);
 
+        
+        // var_dump($lista);
         
         if(isset($lista)){
             foreach ($lista as $usuario) {
@@ -60,17 +61,14 @@ class Usuario{
 
     
 
-    public static function CrearUsuario($email,$claveEncriptada,$tipo){
+    public static function CrearUsuario($email,$claveEncriptada){
         $retorno = false;
-        $usuarioExistente = Usuario::buscarUsuario($email);
-        if(!$usuarioExistente){
+        if(!Usuario::buscarUsuario($email)){
             
 
-            $imagenNombre = Archivos::guardarImagen($_FILES,9999999999,'./imagenes/',true);
+            $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/imagen',true);
             
-            
-            $usuario = new Usuario($email,$claveEncriptada,$imagenNombre,$tipo);
-            
+            $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
             if ($usuario->email != "emailNoValido") {
                 if(Archivos::guardarJson($usuario,'users.json')){
                     $retorno = true;
@@ -92,7 +90,7 @@ class Usuario{
         }
         else
         {
-            $retorno = false;
+            echo "Usuario ya existente!";
         }
         return $retorno;
     }
@@ -102,6 +100,7 @@ class Usuario{
     {   
         $retorno = false;
         Archivos::leerJson('./users.json',$listaUsuarios);
+        //var_dump($listaUsuarios);
 
         foreach ($listaUsuarios as $usuario) {
             if ($usuario['email'] === $email) {
@@ -112,25 +111,35 @@ class Usuario{
             }
         }
         return $retorno;
+        // if(isset( $listaUsuarios)){
+        //     if(Archivos::leerTxt('usuario.txt', $listaUsuarios))
+        //     {
+        //         foreach ($listaUsuarios as $auxUr)
+        //         {
+        //             if($email == $auxUr['email'])
+        //             {
+        //                 $retorno = true;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // return $retorno;
+        // }
         
     }
     public static function asignarFotoNueva($email,$foto){
-        $listaUsuarios = Archivos::leerJson('./users.json',$listaUsuarios);
-        
-        // $nombreFoto = $_FILES["imagen"]["name"];
+        Archivos::leerJson('./users.json',$listaUsuarios);
+        //var_dump($listaUsuarios);
+        $nombreFoto = $_FILES["foto"]["name"];
         for ($i=0; $i < count($listaUsuarios); $i++) { 
             if ($listaUsuarios[$i]['email'] === $email) {
-                
+                //var_dump($nombreFoto);
                 //$pathMover = "./imagenes/" . $listaUsuarios[$i]['imagenNombre'];
-                $root = __DIR__.DIRECTORY_SEPARATOR."clasesParaParcial".DIRECTORY_SEPARATOR;
-                $rutaImagen = $root."imagenes" . DIRECTORY_SEPARATOR;
-                $rutaBackup = $root."backup" . DIRECTORY_SEPARATOR;
-                $origen =  $rutaImagen . $listaUsuarios[$i]['imagenNombre'];
-                $destino = $rutaBackup .$listaUsuarios[$i]['imagenNombre'];
+
+                Archivos::moverImagen("./imagenes/imagen" . $listaUsuarios[$i]['imagenNombre'] , "./backup/".$listaUsuarios[$i]['imagenNombre']);
+                $usuarioAux = new Usuario($email,$listaUsuarios[$i]['clave'],$nombreFoto);
                 
-                rename($origen,$destino);
-                $nombreFoto = Archivos::guardarImagen($_FILES,9999999999,'./imagenes/',true);
-                
+                /**updatear la base de datos */
                 Archivos::modificarJson("./users.json",$i,"imagenNombre",$nombreFoto);
                 $retorno = true;
                 return $retorno;

@@ -2,7 +2,7 @@
 class Auto
 { 
     // public $_horaIngreso;
-    public $patente;
+    public $_patente;
     // public $email;
     public $precio;
     public $marca;
@@ -12,7 +12,7 @@ class Auto
     {
         $this->marca = $marca;
         $this->modelo = $modelo;
-        $this->patente = $patente;
+        $this->_patente = $patente;
         $this->precio = $precio;
     }
 
@@ -44,7 +44,7 @@ class Auto
     }
 
     public static function mostrarAuto($objAuto){
-        return "Patente: ". $objAuto->_patente . ' Email: ' . $objAuto->email . ' Fecha Ingreso: ' . $objAuto->_horaIngreso;
+        return "Patente: ". $objAuto->_patente . ' Marca: ' . $objAuto->marca . ' Modelo: ' . $objAuto->modelo . ' Precio: ' . $objAuto->precio;
     }
     
     
@@ -84,6 +84,20 @@ class Auto
 
         return $this->_patente . '*' . $this->email . '*' . $this->_horaIngreso;
 
+    }
+    public static function validarPatenteVehiculo($listaVehiculos,$patente){
+
+        $retorno = false;
+        foreach ($listaVehiculos as $vehiculo) {
+            $objAux = (object) $vehiculo;
+            if ($objAux->_patente == $patente) {
+                $retorno = true;
+            }
+            else{
+                $retorno = false;
+            }
+        }
+        return $retorno;
     }
 
     //no hacemos geters ni setters por que php ya los trae

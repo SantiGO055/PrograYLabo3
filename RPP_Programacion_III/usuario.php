@@ -1,7 +1,7 @@
 <?php
 
-include_once './clasesParaParcial/token.php';
-include_once './clasesParaParcial/archivos.php';
+include_once '../clasesParaParcial/token.php';
+include_once '../clasesParaParcial/archivos.php';
 
 
 class Usuario{
@@ -66,6 +66,8 @@ class Usuario{
         if(!$usuarioExistente){
             
 
+            /**guardar nombre de imagen */
+            
             $imagenNombre = Archivos::guardarImagen($_FILES,9999999999,'./imagenes/',true);
             
             
