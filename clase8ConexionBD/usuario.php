@@ -1,7 +1,7 @@
 <?php
 
 include_once '../clasesParaParcial/token.php';
-include_once '../clasesParaParcial/archivos.php';
+include_once './archivos.php';
 include_once './AccesoDatos.php';
 
 
@@ -61,16 +61,20 @@ class Usuario{
 
     
 
-    public static function CrearUsuario($email,$claveEncriptada){
+    public static function CrearUsuario($email,$clave){
         $retorno = false;
-        if(!Usuario::buscarUsuario($email)){
-            
+        $objetoAcceso = AccesoDatos::dameUnObjetoAcceso();
 
-            $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/imagen',true);
-            
-            $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
-            if ($usuario->email != "emailNoValido") {
-                if(Archivos::guardarJson($usuario,'users.json')){
+        $claveEncriptada = Usuario::encriptarContraseña($clave);
+        $mailSQL = buscarMailSQL($email);
+        // echo $arrayusuarioDeBD->email;
+        // var_dump($arrayusuarioDeBD);
+
+        if($mailSQL != false){
+            if($arrayusuarioDeBD->email != $email && $usuario->email != "emailNoValido"){
+                $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'\imagenes',true);
+                $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
+                if($objetoAcceso->insertDatosUsuario('usuarios',$email,$claveEncriptada,$imagenNombre)){
                     $retorno = true;
                 }
                 if (isset($listaUsuarios)) {
@@ -82,22 +86,41 @@ class Usuario{
                     $listaUsuarios = $usuario;
                 }
             }
-            else{
-                $retorno = false;
+        }
+        else{
+            echo "no hay nada en la base de datos";
+            /**si no hay nada en la base de datos cargada */
+            $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'\imagenes',true);
+            $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);
+            if($objetoAcceso->insertDatosUsuario('usuarios',$email,$claveEncriptada,$imagenNombre)){
+                $retorno = true;
             }
-
-            
+            if (isset($listaUsuarios)) {
+                
+                array_push($listaUsuarios);
+            }
+            else{
+                
+                $listaUsuarios = $usuario;
+            }
         }
-        else
-        {
-            echo "Usuario ya existente!";
-        }
+        
         return $retorno;
     }
-
+    public static function buscarMailSQL($email){
+        /**busco el usuario */
+        $arrayusuarioDeBD = $objetoAcceso->obtenerEmail($email,'usuarios');
+        if ($arrayusuarioDeBD != null) {
+            return $arrayusuarioDeBD->email;
+        }
+        else{
+            return false;
+        }
+    }
 
     public static function buscarUsuario($email)
     {   
+        
         $retorno = false;
         Archivos::leerJson('./users.json',$listaUsuarios);
         //var_dump($listaUsuarios);

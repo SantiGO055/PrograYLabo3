@@ -39,7 +39,9 @@ switch($request_method)
                 
                 // echo $pathAux[4];
                 $foto = $_POST['foto'] ?? "";
-                $id = $_GET['id'] ?? 0;
+                // $id = $_GET['id'] ?? 0;
+                $email = $_POST['email'] ?? "";
+                $clave = $_POST['clave'] ?? 0;
 
                 // var_dump(manejoSql::obtenerId(1,'envios'));
                 
@@ -49,22 +51,34 @@ switch($request_method)
 
                     $objetoAcceso = AccesoDatos::dameUnObjetoAcceso();
                     $objetoAcceso->updateDatos('materias','Nombre','asdasdas',0);
-                    $celda = $objetoAcceso->obtenerCelda(0,'materias');
+                    $celda = $objetoAcceso->obtenerCeldaPorId(0,'materias');
                     $datos .= "Se modificaron los siguientes datos en la base: ID: " . $celda['id'] . ' Nombre: ' . $celda['nombre'] . ' cuatrimestre ' . $celda['cuatrimestre'];
                 }
-                else{
-                    $objetoAcceso = AccesoDatos::dameUnObjetoAcceso();
-                    $celda = $objetoAcceso->obtenerCelda(1,'materias');
+                else if ($pathAux[4]== 'alta'){
+                    // $objetoAcceso = AccesoDatos::dameUnObjetoAcceso();
+                    // $celda = $objetoAcceso->obtenerCelda(0,'usuarios');
                     
+                    //FIXME hacer esto dentro de la clase Usuario
+                    
+                    if(Usuario::CrearUsuario($email,$clave))
+                    {
+                        $datos = 'Se creo el usuario correctamente!';
+                    }
+                    else
+                    {
+                        $datos = 'Error al crear usuario. Email no valido';
+                    }
+                    // $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'\imagenes',true);
+                    
+                    // $objetoAcceso->insertDatosUsuario('usuarios',3,$email,$clave,$imagenNombre);
+                    
+                    // if(Usuario::CrearUsuario($email,$claveEncriptada){
 
-                    // $objetoAcceso->bindParam(':id', $id, PDO:: PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 5);
-                    // $resultado = $query->fetchAll(PDO::FETCH_CLASS, "Materias");
-                    // $resultado = $query->execute();
-                    // var_dump($objetoAcceso->fetchAll());
+                    // }
                     
                     // var_dump($objetoAcceso);
-                    $datos .= "ID: " . $celda['id'] . ' Nombre: ' . $celda['nombre'] . ' cuatrimestre ' . $celda['cuatrimestre'];
-                    
+                    // $datos .= "ID: " . $celda['id'] . ' Nombre: ' . $celda['nombre'] . ' cuatrimestre ' . $celda['cuatrimestre'];
+                    $datos .= "Se inserto el usuario correctamente";
                 }
                 // if(Usuario::asignarFotoNueva($pathAux[4],$foto)){
                     

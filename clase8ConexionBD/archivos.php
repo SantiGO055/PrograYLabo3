@@ -235,8 +235,8 @@ class Archivos{
             
             $nombreArchivo = Archivos::asignarNombreFotoAleatorio();
             
-            $destino = $path . "/" . $nombreArchivo;
-        
+            $destino = $path . DIRECTORY_SEPARATOR . $nombreArchivo;
+            
             if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
                 $subido = move_uploaded_file($origen,SITE_ROOT.$destino);
                 if ($subido) {
@@ -257,7 +257,7 @@ class Archivos{
             $destino = $path . '.' . $extension;
        
             if(Archivos::esImagen($_files['foto']['type']) && Archivos::validarBytesImagen($_files,$bytes)){
-                $subido = move_uploaded_file($origen,$destino);
+                $subido = move_uploaded_file($origen,SITE_ROOT.$destino);
                 if ($subido) {
                     return "Se guardo la imagen correctamente";
                 }

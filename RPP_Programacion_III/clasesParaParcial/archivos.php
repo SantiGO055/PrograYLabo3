@@ -227,7 +227,7 @@ class Archivos{
         $nombreArchivo = "imagen" . $aleatorio .'.' . $extension;
         return $nombreArchivo;
     }
-    public static function guardarImagen($_files,$bytes,$path,$aleat = false){
+    public static function guardarImagen($_files,$bytes,$path,$aleat){
 
         $origen = $_files['imagen']['tmp_name'];
         if($aleat){

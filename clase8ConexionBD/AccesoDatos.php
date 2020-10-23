@@ -40,7 +40,7 @@ class AccesoDatos
         trigger_error('La clonación de este objeto no está permitida', E_USER_ERROR); 
     }
 
-    public function obtenerCelda($id,$tabla){
+    public function obtenerCeldaPorId($id,$tabla){
         try {
             
             $query = $this->RetornarConsulta('select * from utn.' . $tabla . ' where id = :id');
@@ -55,7 +55,6 @@ class AccesoDatos
         } catch (\Throwable $th) {
             echo $th->getMessage();
         }
-        
     }
     public function updateDatos($tabla,$clave,$valor,$id){
         try { 
@@ -72,7 +71,61 @@ class AccesoDatos
         } catch (\Throwable $th) {
             echo $th->getMessage();
         }
-
     }
+    public function insertDatosUsuario($tabla,$email,$clave,$imagenNombre){
+        try { 
+
+            // $array = array(
+            //     ':id' => $id,
+            //     ':email' => $email,
+            //     ':clave' => $clave,
+            //     ':imagenNombre' => $imagenNombre,
+            //  );
+            // echo 'update utn.'. $tabla .' SET ' . $clave . ' = '. '"'. $valor.'"' . ' where id = :id';
+            // :id,:email,:clave,:fotoNombre
+            $query = $this->RetornarConsulta('insert into '. $tabla .' (email, clave, imagenNombre) VALUES (:email,:clave,:imagenNombre)');
+            
+            // $query->bindParam(':id',$id);
+            // $query->bindParam(':email',$email);
+            // $query->bindParam(':clave',$clave);
+            // $query->bindParam(':imagenNombre',$imagenNombre);
+            // var_dump($resultado);
+            $query->execute(array(
+                ':email' => $email,
+                ':clave' => $clave,
+                ':imagenNombre' => $imagenNombre,
+             ));
+            // array(
+            //     ':id' => $id,
+            //     ':email' => $email,
+            //     ':clave' => $clave,
+            //     ':fotoNombre' => $fotoNombre
+            // )
+            $resultado = $query->fetch(PDO::FETCH_LAZY);
+            return true;
+            // var_dump($objetoAcceso);
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
+            return false;
+        }
+    }
+    
+    public function obtenerEmail($email,$tabla){
+        try {
+            
+            $query = $this->RetornarConsulta('select * from utn.' . $tabla . ' where email = :email');
+            
+            
+            $query->bindParam(':email', $email, PDO:: PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 5);
+            // var_dump($resultado);
+            $resultado = $query->execute();
+            $resultado = $query->fetch(PDO::FETCH_LAZY);
+            return $resultado;
+            // var_dump($objetoAcceso);
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
+        }
+    }
+
 }
 ?>
