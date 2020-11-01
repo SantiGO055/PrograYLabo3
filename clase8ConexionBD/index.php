@@ -1,11 +1,21 @@
 <?php
 
-include_once './profesor.php';
-include_once './usuario.php';
-include_once './materias.php';
-include_once './AccesoDatos.php';
+// include_once './profesor.php';
+// include_once './usuario.php';
+// include_once './materias.php';
+// include_once './AccesoDatos.php';
 
+require __DIR__.'./vendor/autoload.php';
 
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Factory\AppFactory;
+use Slim\Routing\RouteCollectorProxy;
+
+use Clases\Usuario;
+use Clases\Materias;
+use Clases\Archivos;
+use Clases\Profesor;
 
 
 session_start();
@@ -27,8 +37,8 @@ $pathAux = explode('/', getenv('REQUEST_URI'));
 // var_dump($pathAux);
 // echo "<br>";
 
-echo "<br>";
 
+$tablaMaterias = 'materias';
 switch($request_method)
 {
     case 'POST':
@@ -39,20 +49,29 @@ switch($request_method)
                 
                 // echo $pathAux[4];
                 $foto = $_POST['foto'] ?? "";
-                // $id = $_GET['id'] ?? 0;
+                $id = $_POST['id'] ?? 0;
                 $email = $_POST['email'] ?? "";
+                $nombreMateria = $_POST['nombreDeMateria'] ?? "";
                 $clave = $_POST['clave'] ?? 0;
+
 
                 // var_dump(manejoSql::obtenerId(1,'envios'));
                 
                 //TODO continuar practicando SQL
-
+                
                 if ($pathAux[4]== 'update') {
 
-                    $objetoAcceso = AccesoDatos::dameUnObjetoAcceso();
-                    $objetoAcceso->updateDatos('materias','Nombre','asdasdas',0);
-                    $celda = $objetoAcceso->obtenerCeldaPorId(0,'materias');
-                    $datos .= "Se modificaron los siguientes datos en la base: ID: " . $celda['id'] . ' Nombre: ' . $celda['nombre'] . ' cuatrimestre ' . $celda['cuatrimestre'];
+                    $objetoCelda = AccesoDatos::dameUnObjetoAcceso();
+                    $resultadoUpdate = $objetoCelda->updateDatos($tablaMaterias,'Nombre',$nombreMateria,$id);
+                    // var_dump($resultadoUpdate);
+                    if (isset($resultadoUpdate)) {
+                        // echo "encontre el id y lo modifique correctamente";
+                        $datos .= "Se modificaron los siguientes datos en la base: ID: " . $objetoCelda->id . ' Nombre: ' . $objetoCelda->nombre . ' cuatrimestre ' . $objetoCelda->cuatrimestre;
+                    }
+                    else{
+                        $datos = "No existe el id buscado";
+                    }
+                    
                 }
                 else if ($pathAux[4]== 'alta'){
                     // $objetoAcceso = AccesoDatos::dameUnObjetoAcceso();
@@ -66,7 +85,7 @@ switch($request_method)
                     }
                     else
                     {
-                        $datos = 'Error al crear usuario. Email no valido';
+                        $datos = 'Error al crear usuario. Email no valido o existente';
                     }
                     // $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'\imagenes',true);
                     
@@ -78,7 +97,7 @@ switch($request_method)
                     
                     // var_dump($objetoAcceso);
                     // $datos .= "ID: " . $celda['id'] . ' Nombre: ' . $celda['nombre'] . ' cuatrimestre ' . $celda['cuatrimestre'];
-                    $datos .= "Se inserto el usuario correctamente";
+                    
                 }
                 // if(Usuario::asignarFotoNueva($pathAux[4],$foto)){
                     

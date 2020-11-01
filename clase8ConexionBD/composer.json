@@ -1,0 +1,17 @@
+{
+    "name": "santigo/clase8conexion-bd",
+    "authors": [
+        {
+            "name": "SantiGO055",
+            "email": "santigonzalez05@gmail.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^5.2"
+    },
+    "autoload":{
+        "psr-4":{
+            "Clases\\":"clases"
+        }
+    }
+}

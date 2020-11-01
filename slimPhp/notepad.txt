@@ -1,0 +1,7 @@
+La carpeta vendor se puede borrar por que nunca se va a trabajar ahi
+Para el parcial no se sube
+para ignorar la carpeta /vendor en el archivo .gitignore agregammos /vendor
+
+
+hacer api para manejar base de datos
+listar cargar modf y borrar y devolver en json al html

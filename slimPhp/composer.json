@@ -1,0 +1,15 @@
+{
+    "name": "santigo/slim-php",
+    "description":"",
+    "require": {
+        "firebase/php-jwt": "^5.2",
+        "slim/slim": "4.*",
+        "slim/psr7": "^1.2"
+    },
+    "autoload":{
+        "psr-4":{
+            "Clases\\":"clases"
+        }
+    }
+    
+}
