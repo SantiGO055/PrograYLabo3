@@ -24,6 +24,40 @@ $pathAux = explode('/', getenv('REQUEST_URI'));
 // var_dump($pathAux);
 // echo "<br>";
 
+$app->group('/api', function () use ($app) {
+
+    // Library group
+    $app->group('/library', function () use ($app) {
+
+        // Get book with ID
+        $app->get('/books/:id', function ($id) {
+
+        });
+
+        // Update book with ID
+        $app->put('/books/:id', function ($id) {
+
+        });
+
+        // Delete book with ID
+        $app->delete('/books/:id', function ($id) {
+
+        });
+
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
 echo "<br>";
 switch($request_method)
 {

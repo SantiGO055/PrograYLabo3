@@ -1,0 +1,5 @@
+//TODO las funciones deben ser de instancia
+
+de esta manera utilizo la funcion creada en otro archivo para manejar la ruta por grupos
+
+$group->get('/{id}', UserController::class . ":getOne");

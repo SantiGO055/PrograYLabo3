@@ -5,3 +5,10 @@ para ignorar la carpeta /vendor en el archivo .gitignore agregammos /vendor
 
 hacer api para manejar base de datos
 listar cargar modf y borrar y devolver en json al html
+
+
+Instalamos orm eloquent con:
+
+composer require illuminate/database
+
+composer require illuminate/events
