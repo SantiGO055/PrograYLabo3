@@ -1,7 +1,10 @@
 <?php
+namespace Clases;
 
-include_once '../clasesParaParcial/token.php';
-include_once '../clasesParaParcial/archivos.php';
+//incluir namespace para utilizar token y archivos
+use \Clases\Token;
+use \Clases\Archivos;
+// include_once '../clasesParaParcial/archivos.php';
 
 
 class Usuario{

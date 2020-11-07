@@ -1,5 +1,5 @@
 <?php
-
+namespace Clases;
 class Materias{
     public $_nombre;
     public $_cuatrimestre;
