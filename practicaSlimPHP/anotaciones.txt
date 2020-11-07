@@ -1,0 +1,37 @@
+en la carpeta vendor van a estar todas las dependencias que utilice,
+ el que se encarga de instalarlo es composer.
+en composer.json tengo en el objeto require todas las dependencias,
+ si quiero subir a github no subo la carpeta vendor, para el parcial no se sube,
+  si lo borro al vendor, uso el comando composer install, 
+  instala todo lo que este definido en composer.json->require
+
+Siempre que usemos composer vamos a tener que incluir:
+require __DIR__.'./vendor/autoload.php';
+
+a cada archivo con su clase le podemos asignar un namespace
+la incluimos con use "namespace" . ejemplo:
+use \Firebase\JWT\JWT;
+Ademas de crear un namespace para incluir clases y archivos
+tenemos que agregar el objeto autoload al archivo composer.json
+"autoload": {
+  "psr-4": {
+      "Clases\\": "clases",
+      "App\\": "src/",
+      "Config\\": "config"
+  }
+}
+con esta propiedad le decimos que cargue nuestro namespace
+todas van en autoload, vamos a utilizar la propiedad psr4
+es el namespace de php estandar
+Luego de agregar este objeto al archivo composer.json debemos ejecutar el comando:
+composer dump-autoload
+o tambien si no funciona ejecutamos:
+composer dump-autoload -o
+
+puedo renombrar clases con as . ejemplo:
+
+use Psr\Http\Message\ResponseInterface as Response;
+renombro ResponseInterface por Response
+
+en el objeto request vamos a tener toda la info de la peticion que nos hacen, parametros, que navegador.
+El responde es el encargado de devolver la respuesta. Si o si tiene que devolver objeto response
