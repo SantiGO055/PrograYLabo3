@@ -65,7 +65,7 @@ class Usuario{
         $retorno = false;
         
         if(!Usuario::buscarUsuario($email)){
-            echo $email;
+            // echo $email;
             $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/',true);
             
             $usuario = new Usuario($email,$claveEncriptada,$imagenNombre);

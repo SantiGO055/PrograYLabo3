@@ -3,7 +3,9 @@ namespace App\Controllers;
 use Clases\Usuario;
 // use App\Models\User;
 
+
 class UserController {
+    public $datos = array ('datos' => '.');
     public function getAll ($request, $response, $args) {
         // $rta = User::get();
         // $rta = User::find(1);
@@ -15,13 +17,14 @@ class UserController {
         return $response;
     }
 
-    public function getOne($request, $response, $args)
-    {
-        $response->getBody()->write("getOne!");
-        return $response;
-    }
+    // public function getOne($request, $response, $args)
+    // {
+    //     $response->getBody()->write("getOne!");
+    //     return $response;
+    // }
     public function altaUsuario($request, $response, $args)
     {
+        // $datos = array ('datos' => '.');
         // echo $args['id'];
         $parsedBody = $request->getParsedBody();
         // var_dump( $parsedBody['email']);
@@ -32,15 +35,16 @@ class UserController {
         // echo $request['email'];
         // echo "hola";
         $claveEncriptada = Usuario::encriptarContraseña($parsedBody['clave']);
-
+        // var_dump( $datos['datos']);
         if(Usuario::CrearUsuario($parsedBody['email'],$claveEncriptada))
         {
-            $datos = 'Se creo el usuario correctamente!';
+            $datos['datos'] = 'Se creo el usuario correctamente!';
         }
         else
         {
-            $datos = 'Error al crear usuario. Usuario existente';
+            $datos['datos'] = 'Error al crear usuario. Usuario existente';
         }
+        
         $payload = json_encode($datos);
 
         $response->getBody()->write($payload);
@@ -102,7 +106,7 @@ class UserController {
 
         $response->getBody()->write($payload);
         return $response
-          ->withHeader('Content-Type', 'application/json');
+        ->withHeader('Content-Type', 'application/json');
     }
     public function add($request, $response, $args)
     {

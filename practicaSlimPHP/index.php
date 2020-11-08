@@ -4,6 +4,7 @@ use Clases\Profesor;
 use Clases\Materias;
 use Clases\Token;
 use Clases\Usuario;
+use Config\Database;
 use \Firebase\JWT\JWT;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -64,7 +65,7 @@ $app->addRoutingMiddleware();
 //     return $response;
 // });
 
-
+new Database();
 $app->group('', function (RouteCollectorProxy $group) {
     $group->group('/usuario', function(RouteCollectorProxy $groupUser) {
         $groupUser->post('/altaUsuario', UserController::class . ":altaUsuario");
@@ -81,7 +82,7 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->delete('/{id}', UserController::class . ":delete");
 });
 
-$app->post('/materia', UserController::class . ":Materia");
+// $app->post('/materia', UserController::class . ":Materia");
 
 
 
@@ -93,7 +94,7 @@ $app->post('/materia', UserController::class . ":Materia");
 
 // echo $pathAux[3];
 
-echo "<br>";
+// echo "<br>";
 // switch($request_method)
 // {
 //     case 'POST':
