@@ -73,9 +73,9 @@ $app->group('', function (RouteCollectorProxy $group) {
 
     });
 
+    $group->get('/getAll', UserController::class . ":getAll");
     $group->post('/materia', UserController::class . ":Materia");
 
-    $group->post('[/]', UserController::class . ":add");
     
     $group->put('/{id}', UserController::class . ":update");
 
@@ -281,6 +281,6 @@ $app->group('', function (RouteCollectorProxy $group) {
 
 // echo json_encode($respuesta);
 
-
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
 $app->run();
 ?>

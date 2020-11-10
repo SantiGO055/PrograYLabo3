@@ -1,8 +1,5 @@
 <?php
 
-use \Clases\Usuario;
-use \Clases\Profesor;
-use \Clases\Materias;
 include_once 'profesor.php';
 include_once 'usuario.php';
 include_once 'materias.php';
@@ -27,29 +24,29 @@ $pathAux = explode('/', getenv('REQUEST_URI'));
 // var_dump($pathAux);
 // echo "<br>";
 
-// $app->group('/api', function () use ($app) {
+$app->group('/api', function () use ($app) {
 
-//     // Library group
-//     $app->group('/library', function () use ($app) {
+    // Library group
+    $app->group('/library', function () use ($app) {
 
-//         // Get book with ID
-//         $app->get('/books/:id', function ($id) {
+        // Get book with ID
+        $app->get('/books/:id', function ($id) {
 
-//         });
+        });
 
-//         // Update book with ID
-//         $app->put('/books/:id', function ($id) {
+        // Update book with ID
+        $app->put('/books/:id', function ($id) {
 
-//         });
+        });
 
-//         // Delete book with ID
-//         $app->delete('/books/:id', function ($id) {
+        // Delete book with ID
+        $app->delete('/books/:id', function ($id) {
 
-//         });
+        });
 
-//     });
+    });
 
-// });
+});
 
 
 

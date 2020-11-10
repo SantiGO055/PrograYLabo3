@@ -11,9 +11,9 @@ class Database{
         $capsule->addConnection([
             'driver'    => 'mysql',
             'host'      => 'localhost',
-            'database'  => 'utn',
-            'username'  => 'root',
-            'password'  => '',
+            'database'  => 'id15310111_utn',
+            'username'  => 'id15310111_progra3',
+            'password'  => 'Pruebita@123',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',

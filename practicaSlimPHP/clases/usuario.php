@@ -64,7 +64,7 @@ class Usuario{
     public static function CrearUsuario($email,$claveEncriptada){
         $retorno = false;
         
-        if(!Usuario::buscarUsuario($email)){
+        // if(!Usuario::buscarUsuario($email)){
             // echo $email;
             $imagenNombre = Archivos::guardarImagen($_FILES,3670016,'./imagenes/',true);
             
@@ -87,11 +87,11 @@ class Usuario{
             }
 
             
-        }
-        else
-        {
-            $retorno = false;
-        }
+        // }
+        // else
+        // {
+        //     $retorno = false;
+        // }
         return $retorno;
     }
 

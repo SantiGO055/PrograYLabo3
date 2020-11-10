@@ -35,3 +35,10 @@ renombro ResponseInterface por Response
 
 en el objeto request vamos a tener toda la info de la peticion que nos hacen, parametros, que navegador.
 El responde es el encargado de devolver la respuesta. Si o si tiene que devolver objeto response
+
+Con la utilizacion de la clase extendiendo de models, el programa va a ir a buscar
+a la base de datos el nombre de la clase en plural, por ejemplo:
+class User extends models
+Si quiero elegir que tabla vaya a buscar escribo:
+protected $table = "tablaABuscar";
+Cada vez que hace una operacion eloquent utiliza timestamp

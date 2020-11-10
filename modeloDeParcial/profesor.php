@@ -1,6 +1,5 @@
 <?php
-namespace Clases;
-use \Clases\Materias;
+
 class Profesor{
     public $legajo; //int
     public $nombre; //string

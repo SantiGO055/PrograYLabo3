@@ -1,16 +1,16 @@
 <?php
 namespace App\Controllers;
 use Clases\Usuario;
-// use App\Models\User;
+use App\Models\User;
 
 
 class UserController {
     public $datos = array ('datos' => '.');
     public function getAll ($request, $response, $args) {
-        // $rta = User::get();
+        $rta = User::get(); //select * from users
         // $rta = User::find(1);
         // $rta = User::where('id', '>',  0)
-        // // ->where('campo', 'operador', 'valor')        
+        // ->where('campo', 'operador', 'valor')        
         // ->get();
 
         $response->getBody()->write(json_encode($rta));
@@ -24,30 +24,34 @@ class UserController {
     // }
     public function altaUsuario($request, $response, $args)
     {
-        // $datos = array ('datos' => '.');
-        // echo $args['id'];
         $parsedBody = $request->getParsedBody();
-        // var_dump( $parsedBody['email']);
-        // var_dump( $request);
-        // echo "<br>";
-        // echo $request['email'];
-        // echo "<br>";
-        // echo $request['email'];
-        // echo "hola";
+        $email = $parsedBody['email'];
+        $rta = User::where('email', $email)->first();
+
+        // var_dump($rta);
+
+
+        
         $claveEncriptada = Usuario::encriptarContraseña($parsedBody['clave']);
         // var_dump( $datos['datos']);
-        if(Usuario::CrearUsuario($parsedBody['email'],$claveEncriptada))
+        if(Usuario::CrearUsuario($email,$claveEncriptada) && $rta == null)
         {
+            $user = new User;
+            $user->email = $email;
+            $user->password = $claveEncriptada;
+            $rta = $user->save();
             $datos['datos'] = 'Se creo el usuario correctamente!';
+            // var_dump($user);
         }
         else
         {
-            $datos['datos'] = 'Error al crear usuario. Usuario existente';
+            $rta = false;
+            $datos['datos'] = "Error al crear usuario.";
+            
         }
-        
         $payload = json_encode($datos);
-
         $response->getBody()->write($payload);
+        
         return $response
           ->withHeader('Content-Type', 'application/json');
     }
@@ -55,13 +59,6 @@ class UserController {
     {
         // echo $args['id'];
         $parsedBody = $request->getParsedBody();
-        // var_dump( $parsedBody['email']);
-        // var_dump( $request);
-        // echo "<br>";
-        // echo $request['email'];
-        // echo "<br>";
-        // echo $request['email'];
-        // echo "hola";
         $token = Usuario::Login($parsedBody['email'], $parsedBody['clave']);
 
         if(Usuario::Login($parsedBody['email'], $parsedBody['clave']))
@@ -108,43 +105,89 @@ class UserController {
         return $response
         ->withHeader('Content-Type', 'application/json');
     }
-    public function add($request, $response, $args)
-    {
-        $user = new User;
-        $user->name = "Juan";
-        $user->email = "Juan@mail.com";
-        $user->password = "sdxdsdsds";
+    // public function add($request, $response, $args)
+    // {
+    //     $user = new User;
+    //     $user->name = "Juan";
+    //     $user->email = "Juan@mail.com";
+    //     $user->password = "sdxdsdsds";
 
-        $rta = $user->save();
+    //     $rta = $user->save();
 
-        $response->getBody()->write(json_encode($rta));
-        return $response;
-    }
+    //     $response->getBody()->write(json_encode($rta));
+    //     return $response;
+    // }
 
     public function update($request, $response, $args)
     {
+        $params = (array)$request->getQueryParams();
+
         $id = $args['id'];
+        $email = $params['email'];
+        $name = $params['name'];
+        // var_dump($request);
+        // $parsedBody = $request->getParsedBody();
+        // var_dump($params);
+        // $email = $parsedBody['email'];
+        // $name = $parsedBody['name'];
+
         $user = User::find($id);
+        if($user){
+            $user->email = $email;
+            $user->name = $name;
+            
+            if($user->save()){
 
-        $user->name = "Peter";
-        $user->email = "nuevo@mail.com";
+                $datos['datos'] = "Se modifico el usuario correctamente.";
+                
+            }
+            else{
+                $datos['datos'] = "Error al modificar datos";
+            }
+            
+        }
+        else{
+            $datos['datos'] = "Error. ID no encontrado";
+        }
 
-        $rta = $user->save();
+        // $rta = $user->save();
 
-        $response->getBody()->write(json_encode($rta));
+        $response->getBody()->write(json_encode($datos));
         return $response;
     }
 
     public function delete($request, $response, $args)
     {
         $id = $args['id'];
+        $parsedBody = $request->getParsedBody();
+        
+        // $rta = User::where('email', $email)->first();
+
         $user = User::find($id);
+        if($user){
+            if($user->delete()){
+                $datos['datos'] = "Se elimino el usuario correctamente.";
+            }
+        }
+        else{
+            $datos['datos'] = "Error. ID no encontrado";
+        }
+        
 
-        $rta = $user->delete();
-
-        $response->getBody()->write(json_encode($rta));
+        $response->getBody()->write(json_encode($datos));
         return $response;
+        // getAll();
     }
+    public function isEmail($email){
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            return false;
+        }
+        else{
+            return $email;
+        }
+    }
+
     // $respuesta = new stdClass;
     // $respuesta->success = true;
 
