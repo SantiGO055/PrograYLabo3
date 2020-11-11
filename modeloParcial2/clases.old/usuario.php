@@ -42,7 +42,7 @@ class Usuario{
 
     public static function Login($email,$clave){
         $retorno = false;
-        $lista = Archivos::leerJson('users.json',$listaUsuarios);
+        // $lista = Archivos::leerJson('users.json',$listaUsuarios);
 
         
         // var_dump($lista);
@@ -82,9 +82,9 @@ class Usuario{
             
             $usuario = new Usuario($email,$claveEncriptada,$imagenNombre,$tipo);
             if ($usuario->email != "emailNoValido") {
-                if(Archivos::guardarJson($usuario,'users.json')){
+                // if(Archivos::guardarJson($usuario,'users.json')){
                     $retorno = true;
-                }
+                // }
                 if (isset($listaUsuarios)) {
                     
                     array_push($listaUsuarios);
@@ -111,7 +111,7 @@ class Usuario{
     public static function buscarUsuario($email)
     {   
         $retorno = false;
-        Archivos::leerJson('./users.json',$listaUsuarios);
+        // Archivos::leerJson('./users.json',$listaUsuarios);
         //var_dump($listaUsuarios);
 
         foreach ($listaUsuarios as $usuario) {
@@ -140,7 +140,7 @@ class Usuario{
         
     }
     public static function asignarFotoNueva($email,$foto){
-        Archivos::leerJson('./users.json',$listaUsuarios);
+        // Archivos::leerJson('./users.json',$listaUsuarios);
         //var_dump($listaUsuarios);
         $nombreFoto = $_FILES["foto"]["name"];
         for ($i=0; $i < count($listaUsuarios); $i++) { 

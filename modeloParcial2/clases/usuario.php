@@ -40,27 +40,32 @@ class Usuario{
         }
     }
 
-    public static function Login($email,$clave){
+    public static function Login($email,$clave,$claveBase,$imagenNombre,$tipo){
         $retorno = false;
         $lista = Archivos::leerJson('users.json',$listaUsuarios);
 
         
         // var_dump($lista);
         
-        if(isset($lista)){
-            foreach ($lista as $usuario) {
+        // if(isset($lista)){
+        //     foreach ($lista as $usuario) {
                 //$usuario['clave'] es la clave encriptada del json que levanto
-                if ($usuario['email'] == $email && Usuario::verificarContraseña($clave,$usuario['clave'])) {
-                    
+                // $usuario['email'] == $email &&
+                if ( Usuario::verificarContraseña($clave,$claveBase)) {
+                    $usuario = array('email' => $email, 'clave' => $claveBase, 'imagenNombre'=>$imagenNombre,'tipo'=>$tipo);
                     //Usuario::verificarContraseña($clave,$usuario['clave']);
+                    
 
                     $token = Token::crearToken($usuario);
                     
                     return $token;
-                break;
+                // break;
                 }
-            }
-        }
+                else{
+                    return false;
+                }
+        //     }
+        // }
     }
 
     public static function encriptarContraseña($clave){
@@ -82,9 +87,9 @@ class Usuario{
             
             $usuario = new Usuario($email,$claveEncriptada,$imagenNombre,$tipo);
             if ($usuario->email != "emailNoValido") {
-                if(Archivos::guardarJson($usuario,'users.json')){
-                    $retorno = true;
-                }
+                // if(Archivos::guardarJson($usuario,'users.json')){
+                    $retorno = $usuario;
+                // }
                 if (isset($listaUsuarios)) {
                     
                     array_push($listaUsuarios);

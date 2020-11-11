@@ -20,38 +20,16 @@ use Slim\Routing\RouteCollectorProxy;
 use Slim\Middleware\ErrorMiddleware;
 use Slim\Exception\NotFoundException;
 
-
-
 use App\Controllers\UserController;
 use App\Middlewares\JsonMiddleware;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\UserMiddleware;
-// include_once 'profesor.php';
-// include_once 'usuario.php';
-// include_once 'materias.php';
 
 
 session_start();
 
-$request_method = $_SERVER['REQUEST_METHOD'];
-// $path_info = $_SERVER['PATH_INFO'];
-
-$listaDeMaterias = array();
-$listaDeMateriasProfe = array();
-
-$header = getallheaders();
-$listaProfes = [];
-
-
-$pathAux = explode('/', getenv('REQUEST_URI'));
-
-// var_dump($_SERVER);
-// echo "<br>";
-// var_dump($pathAux);
-// echo "<br>";
-
 $app = AppFactory::create();
-$app->setBasePath("/practicaSlimPHP");
+$app->setBasePath("/modeloParcial2");
 
 
 $app->addRoutingMiddleware();
@@ -68,50 +46,35 @@ $app->addRoutingMiddleware();
 //     return $response;
 // });
 
-/**
-    * Se debe realizar una aplicación para un estacionamiento de autos.
-    *A partir del punto 3 todas las rutas deberán estar autenticadas con un token JWT.
-    *La clave para generar el JWT tiene que ser primerparcial.
-    *Todas las peticiones se deberán recibir en el archivo index.php.
-    *Se debe respetar las peticiones del postman.
-    *La hora límite de entrega son las 21:00.
-    *
-    *1. (POST) registro. Registrar un usuario con los siguientes datos: email, tipo de usuario, password
-    *y foto. El tipo de usuario puede ser admin o user. Validar que el mail no esté registrado
-    *previamente.
-    *2. (POST) login: Los usuarios deberán loguearse y se les devolverá un token con email y tipo en
-    *caso de estar registrados, caso contrario se informará el error.
-    *3. (POST) vehiculo: Se deben guardar los siguientes datos: marca, modelo, patente y precio. Los
-    *datos se guardan en el archivo de texto vehiculos.xxx, tomando la patente como identificador(la
-    *patente no puede estar repetida).
-    *4. (GET) patente/aaa123: Se ingresa marca, modelo o patente, si coincide con algún registro del
-    *archivo se retorna las ocurrencias, si no coincide se debe retornar “No existe xxx” (xxx es lo
-    *que se buscó) La búsqueda tiene que ser case insensitive.
-    *5. (POST) servicio: Se recibe el nombre del servicio a realizar: id, tipo(de los 10.000km, 20.000km,
-    *50.000km), precio y demora, y se guardará en el archivo tiposServicio.xxx.
-    *6. (GET) turno: Se recibe patente y fecha (día) y se debe guardar en el archivo turnos.xxx, fecha,
-    *patente, marca, modelo, precio y tipo de servicio. Si no hay cupo o la patente no existe informar
-    *cada caso particular.
-    *7. (POST) stats/: Solo admin. Puede recibir el tipo de servicio, si lo incluye, muestra un listado con
-    *los servicios de ese tipo realizados, si no muestra todos los servicios.
- */
-
 new Database();
+// $app->post('/altaUsuario', function (Request $request, Response $response, $args) {
+//     echo "hola";
+//     return $response;
+// });
 $app->group('', function (RouteCollectorProxy $group) {
-    $group->group('/usuario', function(RouteCollectorProxy $groupUser) {
-        $groupUser->post('/altaUsuario', UserController::class . ":altaUsuario");
-        $groupUser->post('/login', UserController::class . ":login");
+    $group->post('/altaUsuario', UserController::class . ":altaUsuario");
+    $group->post('/login', UserController::class . ":login");
 
-    });
+    $group->group('', function(RouteCollectorProxy $groupUser) {
+        $groupUser->post('/vehiculo', UserController::class . ":Vehiculo");
+        $groupUser->get('/patente/{patente}', UserController::class . ":getVehiculo");
+        $groupUser->post('/servicio', UserController::class . ":altaServicio");
+        $groupUser->get('/turno', UserController::class . ":altaTurno");
 
-    $group->get('/getAll', UserController::class . ":getAll");
-    $group->post('/materia', UserController::class . ":Materia");
+    })->add(new AuthMiddleware);
+
+    $group->get('/getAllUsers', UserController::class . ":getAllUsers");
+    $group->get('/getAllVehiculos', UserController::class . ":getAllVehiculos");
+    $group->get('/getServicios/{id}', UserController::class . ":getServicios");
+
+    
 
     
     $group->put('/{id}', UserController::class . ":update");
 
     $group->delete('/{id}', UserController::class . ":delete");
-}); //primero se ejecuta el ultimo, si no da ok el auth no se ejecuta el userMiddleware
+});
+// ->add(new UserMiddleware)->add(new AuthMiddleware); //primero se ejecuta el ultimo, si no da ok el auth no se ejecuta el userMiddleware
 $app->add(new JsonMiddleware);
 // ->add(function ($request, $handler) {
 //     $response = $handler->handle($request);
