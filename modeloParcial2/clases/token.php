@@ -13,7 +13,8 @@ class Token{
 
         $payload = array(
             "email" => $dato['email'],
-            "clave" => $dato['clave']
+            "clave" => $dato['clave'],
+            "tipo"  => $dato['tipo']
         );
         
         //este metodo devuelve el token

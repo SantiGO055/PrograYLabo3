@@ -1,0 +1,347 @@
+{
+	"info": {
+		"_postman_id": "d5956c17-2040-4eec-bcb4-bedfff3d1ec7",
+		"name": "modeloParcial2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Punto 1 (POST) Alta",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "asd@asd.asd123",
+							"type": "text"
+						},
+						{
+							"key": "clave",
+							"value": "asd1234asd",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "foto",
+							"type": "file",
+							"src": "/C:/xampp/htdocs/modeloParcial2/imagenes/imagen.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/modeloParcial2/altaUsuario",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"altaUsuario"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Punto 2 (POST) Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "asd@asd.asd",
+							"type": "text"
+						},
+						{
+							"key": "clave",
+							"value": "asd1234",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/modeloParcial2/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Punto 3 (POST) Vehiculo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFzZEBhc2QuYXNkIiwiY2xhdmUiOiIkMnkkMTAkeHlWcjBWdmpTck9nRjlaNGJxS2VsLkpOV0l5cUoxemdSNk1OMmllTlBFMXdpWS5TbTNDby4iLCJ0aXBvIjoidXNlciJ9.ExMRaPJgC3OJ4EkBvQSSCF7PeBBoBSwSCg8Frq09rBI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "marca",
+							"value": "toyota",
+							"type": "text"
+						},
+						{
+							"key": "modelo",
+							"value": "hilux",
+							"type": "text"
+						},
+						{
+							"key": "patente",
+							"value": "asd123a",
+							"type": "text"
+						},
+						{
+							"key": "precio",
+							"value": "1000000",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/modeloParcial2/vehiculo",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"vehiculo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Punto 4 (GET) Patente",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFzZEBhc2QuYXNkIiwiY2xhdmUiOiIkMnkkMTAkeHlWcjBWdmpTck9nRjlaNGJxS2VsLkpOV0l5cUoxemdSNk1OMmllTlBFMXdpWS5TbTNDby4iLCJ0aXBvIjoidXNlciJ9.ExMRaPJgC3OJ4EkBvQSSCF7PeBBoBSwSCg8Frq09rBI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "localhost/modeloParcial2/patente/asd123a",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"patente",
+						"asd123a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Punto 5 (POST) Servicio",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFzZEBhc2QuYXNkIiwiY2xhdmUiOiIkMnkkMTAkeHlWcjBWdmpTck9nRjlaNGJxS2VsLkpOV0l5cUoxemdSNk1OMmllTlBFMXdpWS5TbTNDby4iLCJ0aXBvIjoidXNlciJ9.ExMRaPJgC3OJ4EkBvQSSCF7PeBBoBSwSCg8Frq09rBI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "9",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "20000",
+							"type": "text"
+						},
+						{
+							"key": "precio",
+							"value": "1500",
+							"type": "text"
+						},
+						{
+							"key": "demora",
+							"value": "02:00:00",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/modeloParcial2/servicio",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"servicio"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost/modeloParcial2/20",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"20"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAll",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/modeloParcial2/getAllVehiculos",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"getAllVehiculos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetServicios",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/modeloParcial2/getServicios/1",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"getServicios",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUNTO 6 (GET) Turno",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFzZEBhc2QuYXNkIiwiY2xhdmUiOiIkMnkkMTAkeHlWcjBWdmpTck9nRjlaNGJxS2VsLkpOV0l5cUoxemdSNk1OMmllTlBFMXdpWS5TbTNDby4iLCJ0aXBvIjoidXNlciJ9.ExMRaPJgC3OJ4EkBvQSSCF7PeBBoBSwSCg8Frq09rBI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "patente",
+							"value": "asd123a",
+							"type": "text"
+						},
+						{
+							"key": "fecha",
+							"value": "2020-11-11",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "10000",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/modeloParcial2/turno",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"turno"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Punto 7 (GET) Stats",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFzZEBhc2QuYXNkMTIzIiwiY2xhdmUiOiIkMnkkMTAkTUtBNm1TRUVXRmRxNGVHYTFRU3BwT1dRN0dYVXdmTFNtVlk3cHB5VDFkdUNhNTV0NnVOWHkiLCJ0aXBvIjoiYWRtaW4ifQ.889bJTXm_QmK8m66HYoCL-uxngDuljywS2S7Ue2vSgw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "localhost/modeloParcial2/getStats/10000",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"modeloParcial2",
+						"getStats",
+						"10000"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

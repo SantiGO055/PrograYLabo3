@@ -54,7 +54,6 @@ class Usuario{
                 if ( Usuario::verificarContraseña($clave,$claveBase)) {
                     $usuario = array('email' => $email, 'clave' => $claveBase, 'imagenNombre'=>$imagenNombre,'tipo'=>$tipo);
                     //Usuario::verificarContraseña($clave,$usuario['clave']);
-                    
 
                     $token = Token::crearToken($usuario);
                     

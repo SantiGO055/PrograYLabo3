@@ -6,7 +6,8 @@ use Clases\Servicio;
 use App\Models\User;
 use App\Models\Vehiculo;
 use App\Models\Service;
-
+use App\Models\Turno;
+use Clases\Token;
 
 class UserController {
     public $datos = array ('datos' => '.');
@@ -202,6 +203,35 @@ class UserController {
         return $response
           ->withHeader('Content-Type', 'application/json');
     }
+
+    public function getStats($request, $response, $args){
+        // $rta = User::get(); //select * from users
+        // $token = $request->getHeader('token');
+        
+        // $user = Token::VerificarToken($token[0]);
+        // var_dump($user);
+        // $tipo = $args['tipo'];
+        // var_dump($tipo);
+        if($args != null){
+            $tipo = $args['tipo'];
+            $rta = Service::where('tipo', $tipo)
+            ->get();
+        }
+        else{
+            $rta = Service::get();
+        }
+        // if($vehiculo != null){
+        //     $rta = $vehiculo;
+        // }
+        // else{
+            // }
+        // $rta = array( 'datos' => 'No se encontro el vehiculo con la patente ' . $patente);
+        $payload = json_encode($rta);
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
+    }
+
     public function altaServicio($request, $response, $args){
         
         $parsedBody = $request->getParsedBody();
@@ -240,30 +270,41 @@ class UserController {
     }
     public function altaTurno($request, $response, $args){
         
+        /**
+         * (GET) turno: Se recibe patente y fecha (día) y se debe guardar en el archivo turnos.xxx, fecha,
+            *  patente, marca, modelo, precio y tipo de servicio. Si no hay cupo o la patente no existe informar
+            * cada caso particular.
+         */
         $parsedBody = $request->getParsedBody();
         $patente = $parsedBody['patente']; //int
-        $fecha = $parsedBody['fecha']; //int -> 10000, 20000, 50000
-        //TODO Terminar turno
-        $servicioBase = Service::where('id', $id)->first();
+        $fecha = $parsedBody['fecha'];
+        $tipo = $parsedBody['tipo']; //int -> 10000, 20000, 50000
         
-        // var_dump( $datos['datos']);
-        $servicioCreado = new Servicio($id,$tipo,$precio,$demora);
-        // var_dump($usuarioCreado);
-        if($servicioBase == null)
+        $vehiculo = Vehiculo::where('patente', $patente)->first();
+        $turnoBase = Turno::where('fecha', $fecha)->first();
+        $tipoServicioBase = Service::where('tipo', $tipo)->first();
+        
+        if($vehiculo != null) //si encontro vehiculo
         {
-            $servicio = new Service;
-            $servicio->id = $servicioCreado->id;
-            $servicio->tipo = $servicioCreado->tipo;
-            $servicio->precio = $servicioCreado->precio;
-            $servicio->demora = $servicioCreado->demora;
-            $rta = $servicio->save();
-            $datos['datos'] = 'Se creo el servicio correctamente!';
-            // var_dump($user);
+            if($turnoBase == null){ //si el turno no existe lo creo
+                $turno = new Turno;
+                $turno->fecha = $fecha;
+                $turno->patente = $vehiculo->patente;
+                $turno->modelo = $vehiculo->modelo;
+                $turno->marca = $vehiculo->marca;
+                $turno->precio = $vehiculo->precio;
+                $turno->tipo = $tipoServicioBase->tipo;
+                $rta = $turno->save();
+                $datos['datos'] = 'Se creo el turno correctamente!';
+            }
+            else{ //como existe el turno no lo creo
+                $datos['datos'] = 'No hay disponibilidad de turno para la fecha ' . $fecha;
+            }
         }
         else
         {
             $rta = false;
-            $datos['datos'] = "Error al crear servicio, id existente";
+            $datos['datos'] = "No se encuentra el vehiculo";
             
         }
         $payload = json_encode($datos);
@@ -272,6 +313,7 @@ class UserController {
         return $response
           ->withHeader('Content-Type', 'application/json');
     }
+
 
     // public function add($request, $response, $args)
     // {

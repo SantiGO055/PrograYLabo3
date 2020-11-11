@@ -24,6 +24,7 @@ use App\Controllers\UserController;
 use App\Middlewares\JsonMiddleware;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\UserMiddleware;
+use App\Middlewares\AdminMiddleware;
 
 
 session_start();
@@ -59,9 +60,10 @@ $app->group('', function (RouteCollectorProxy $group) {
         $groupUser->post('/vehiculo', UserController::class . ":Vehiculo");
         $groupUser->get('/patente/{patente}', UserController::class . ":getVehiculo");
         $groupUser->post('/servicio', UserController::class . ":altaServicio");
-        $groupUser->get('/turno', UserController::class . ":altaTurno");
-
+        $groupUser->post('/turno', UserController::class . ":altaTurno")->add(new UserMiddleware);
+        
     })->add(new AuthMiddleware);
+    $group->get('/getStats[/{tipo}]', UserController::class . ":getStats")->add(new AdminMiddleware);
 
     $group->get('/getAllUsers', UserController::class . ":getAllUsers");
     $group->get('/getAllVehiculos', UserController::class . ":getAllVehiculos");
