@@ -4,26 +4,31 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 use Slim\Psr7\Response;
-
+use Clases\Token;
 class UserMiddleware{
 
     public function __invoke($request, $handler){
         
-        $jwt = !true; //Validar el token;
-        //tomar del header el token, llamar a clase que valida el token y respondemos
-
-        if(!$jwt){
-            $response = new Response();
+        
+        $parsedBody = $request->getParsedBody();
+        $token = $request->getHeader('token');
+        
+        $user = Token::VerificarToken($token[0]);
+        // var_dump($user->tipo);
+        $response = new Response();
+        if($user->tipo == "user"){
+            
             //podria lanzar una excepcion, manejarla de otro lado
-            $rta = array("rta"=> "No tiene permisos");
-            $response->getBody()->write(json_encode($rta));
-            return $response;
-        }
-        else{
             $response = $handler->handle($request);
             $existingContent = (string) $response->getBody();
             $resp = new Response();
-            $response->getBody()->write($existingContent);
+            $resp->getBody()->write($existingContent);
+            return $resp;
+        }
+        else{
+            $rta = array("rta"=> "Error, no es posible cargar la pagina para este usuario");
+            $response->getBody()->write(json_encode($rta));
+            return $response->withStatus(403);
         }
 
         $response = $handler->handle($request);

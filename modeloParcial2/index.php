@@ -60,9 +60,10 @@ $app->group('', function (RouteCollectorProxy $group) {
         $groupUser->post('/vehiculo', UserController::class . ":Vehiculo");
         $groupUser->get('/patente/{patente}', UserController::class . ":getVehiculo");
         $groupUser->post('/servicio', UserController::class . ":altaServicio");
-        $groupUser->post('/turno', UserController::class . ":altaTurno")->add(new UserMiddleware);
+        $groupUser->post('/turno', UserController::class . ":altaTurno");
         
-    })->add(new AuthMiddleware);
+    })->add(new UserMiddleware)->add(new AuthMiddleware);
+    
     $group->get('/getStats[/{tipo}]', UserController::class . ":getStats")->add(new AdminMiddleware);
 
     $group->get('/getAllUsers', UserController::class . ":getAllUsers");
